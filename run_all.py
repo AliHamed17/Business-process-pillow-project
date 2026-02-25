@@ -52,6 +52,7 @@ if __name__ == "__main__":
 
     # Delay Forecasting
     run_script(os.path.join(src, "delay_forecasting.py"),         "Phase 1.8 — Delay Forecasting (Regression)")
+    run_script(os.path.join(src, "alignment_special_analysis.py"), "Phase 1.8b — Parallelism & Semantic Sub-Processes")
 
     # Normative conformance (hand-crafted Petri Net against XES)
     run_script(os.path.join(src, "conformance_checking.py"),      "Phase 1.9 — Conformance Checking (Normative Net)")

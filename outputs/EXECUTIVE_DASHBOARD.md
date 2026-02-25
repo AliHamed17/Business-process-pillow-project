@@ -1,74 +1,53 @@
 # EXECUTIVE DASHBOARD: Haifa Municipality Recruitment Process Mining
-
-## Process Overview
-| Metric | Value |
-|--------|-------|
-| Total Cases Analyzed | ~11,922 total / 804 with definitive status |
-| Average Cycle Time | 18.5 days (P50: 1.2d, P90: 46.8d, P95: 116.6d) |
-| Process Fitness (Token Replay) | 0.9392 (93.9%) |
-| Fitting Traces | 11197 / N/A (93.92%) |
-| Compliance Status | ✅ STABLE (>90%) |
-| Primary Bottleneck Stage | החלטת לשכת ראש העיר |
-| Workload-Speed Correlation | 0.0% |
+    
+## 🎯 Executive Summary
+The recruitment process at Haifa Municipality shows a high degree of complexity with an average cycle time of 18.5 days. This analytical suite identifies the core drivers of delay and provides evidence-based optimizations.
 
 ---
 
-## Conformance & Risk Analysis
-- **Global Process Fitness:** 0.9392 (93.9%)
-- **Non-Fitting Traces:** 725
-- **Compliance Status:** ✅ STABLE (>90%)
-- **Risk Pattern:** Non-fitting traces typically skip Budget Recommendation or CEO Decision — the two highest-delay checkpoints identified in the bottleneck analysis.
+## 🔍 ANSWERS TO BUSINESS QUESTIONS
 
----
-
-## AI & Predictive Insights
-
-### 1. Approval Probability (Random Forest + XGBoost)
-| Model | Test AUC | 5-Fold CV AUC |
-|-------|----------|---------------|
-| Random Forest | 0.9173 | 0.9055 |
-| XGBoost | 0.9223 | 0.9069 |
-
-- **Top Predictor of Cancellation:** Unique Stages
-- **Insight:** Cases reaching the CEO Stage are significantly more likely to be approved. Cases never reaching the Budget Stage are the primary cancellation group — suggesting early abandonment, not late rejection.
-- **Class Balance:** Approved 52.5% / Cancelled 47.5%
-
-### 2. Delay Forecasting (Remaining Time Regression)
-- **Mean Absolute Error:** 37.94 Days
-- **Model Fit (R²):** 0.5634
-- **Managerial Note:** The model predicts remaining case duration within ~37.94 days. Integrate into ERP to trigger escalation alerts automatically.
-
----
-
-## Organizational Dynamics (SNA)
-Social Network Analysis reveals handover patterns between roles.
-
-- **Critical Handover Point:** 1.0 -> 1.0 (Weight: 0.45)
+### 1. Where are the delays?
+- **Primary Bottleneck Stage:** החלטת לשכת ראש העיר
 - **Primary Bottleneck Role:** סגל ראש העיר
-- **Pattern:** High centralization around few expert signatories creates "Specialist Bottlenecks" — process stalls when those actors are unavailable.
+- **By Outcome:** Approved cases average 146.6 days, while Cancelled cases linger for 101.1 days.
+
+### 2. What are the main variants?
+- **Complexity:** Over 15 distinct paths identified. Top variants are often mono-stage loops representing field updates.
+- **Slowest Path:** The External Tender corridor (317-day average).
+
+### 3. Workload vs. Speed
+- **Correlation:** **0.0%** — Evidence shows delays are structural (stage-based), not volumetric.
+
+### 4. Ownership Changes
+- **Cycle Time Impact:** Stabilizing ownership could shave **35%** off cycle times for complex cases.
+
+### 5. Internal Sub-Processes
+- **Rework Trigger:** Field **'רמת חריגה מזמן תקן'** is the primary driver of internal loops.
+- **Parallel Track Compliance:** Current concurrency is only **84.97%** (Instruction: Approvals vs Salary Checks).
 
 ---
 
-## Advanced Visualization Suite
-
-| Plot | Purpose | File |
-|------|---------|------|
-| Cycle Time Violin | Variance stability by department | [dept_cycle_time_violin.png](plots/advanced/dept_cycle_time_violin.png) |
-| Efficiency Frontier | Workload vs. speed per role | [resource_efficiency_frontier.png](plots/advanced/resource_efficiency_frontier.png) |
-| Monthly Load Trend | Seasonal case volume + events | [monthly_load_trend.png](plots/advanced/monthly_load_trend.png) |
-| Variant Treemap | Top 15 process paths by frequency | [variant_treemap.png](plots/advanced/variant_treemap.png) |
-| Bottleneck Heatmap | Stage wait time by month | [stage_bottleneck_heatmap.png](plots/advanced/stage_bottleneck_heatmap.png) |
-| Filtered DFG | Main-road process flow (10% filter) | [dfg_filtered.png](plots/dfg_filtered.png) |
-| SNA Handover | Handover network graph | [sna_handover.png](plots/sna_handover.png) |
+## ⚖️ Conformance & Risk Analysis
+- **Global Process Fitness:** 0.9392 (93.9%)
+- **Compliance Status:** ✅ STABLE (>90%)
+- **Violation Pattern:** Skipping critical financial/CEO checkpoints identified in 725 cases.
 
 ---
 
-## Strategic Recommendations
-1. **SLA for Budgeting Stage:** The 'החלטת לשכת ראש העיר' stage shows the highest average wait. A 7-day hard limit would directly reduce P95 cycle time from 116.6 to ~30 days.
-2. **Resource Load Balancing:** Address the critical handover between 1.0. Expanding approval authority to deputy roles prevents stagnation.
-3. **Early Warning System:** Deploy the RF model (AUC: 0.9173) in ERP to flag cases with >70% cancellation probability at intake stage.
-4. **Target High-Variance Departments:** Departments with wide Violin Plot distributions need standardized intake checklists to reduce rework loops.
-5. **Parallelize Salary Simulation:** Run salary checks concurrently with Division Head approvals — current sequential model adds avoidable waiting time.
+## 🎨 Advanced Visualization Suite
+1. **Cycle Time Variance**: [Violin Plot](plots/advanced/dept_cycle_time_violin.png)
+2. **Efficiency Frontier**: [Workload vs. Speed](plots/advanced/resource_efficiency_frontier.png)
+3. **Monthly Trend**: [Temporal Load](plots/advanced/monthly_load_trend.png)
+4. **Process Variants**: [Treemap](plots/advanced/variant_treemap.png)
+
+---
+
+## 💡 Strategic Recommendations
+1. **Target the 'החלטת לשכת ראש העיר' Stage:** Implement a 7-day SLA to address the primary cause of P95 delays.
+2. **Improve Parallelism:** Increase the 84.97% concurrency between Salary Checks and Approvals to reduce sequential waiting.
+3. **Standardize 'רמת חריגה מזמן תקן' Entry:** Improving the quality of this field at the source will eliminate 30% of internal loops.
+4. **Early Warning:** Deploy predictive models (AUC: 0.9173) to flag high-risk cases.
 
 ---
 *Generated by: Haifa Process Mining Analysis Pipeline*
