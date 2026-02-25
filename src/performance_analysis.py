@@ -1,15 +1,14 @@
 import argparse
 from pathlib import Path
 
-import pandas as pd
+from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 
-from cli_utils import ensure_exists, ensure_output_dir
+
+REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
 
 
 def analyze_performance(logfile_path, output_dir):
-    df = pd.read_csv(logfile_path)
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-
+    df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='performance analysis')
     df.sort_values(['case_id', 'timestamp'], inplace=True)
 
     case_perf = df.groupby('case_id').agg(
@@ -18,10 +17,14 @@ def analyze_performance(logfile_path, output_dir):
         event_count=('activity', 'size')
     ).reset_index()
 
-    case_perf['cycle_time_days'] = (case_perf['end_time'] - case_perf['start_time']).dt.total_seconds() / (24 * 3600)
+    case_perf['cycle_time_days'] = (
+        case_perf['end_time'] - case_perf['start_time']
+    ).dt.total_seconds() / (24 * 3600)
 
     df['next_timestamp'] = df.groupby('case_id')['timestamp'].shift(-1)
-    df['wait_time_days'] = (df['next_timestamp'] - df['timestamp']).dt.total_seconds() / (24 * 3600)
+    df['wait_time_days'] = (
+        df['next_timestamp'] - df['timestamp']
+    ).dt.total_seconds() / (24 * 3600)
 
     stage_wait = df.groupby('activity')['wait_time_days'].agg(['mean', 'median', 'std', 'max']).reset_index()
     stage_wait.sort_values(by='mean', ascending=False, inplace=True)

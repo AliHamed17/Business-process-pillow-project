@@ -1,15 +1,14 @@
 import argparse
 from pathlib import Path
 
-import pandas as pd
+from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 
-from cli_utils import ensure_exists, ensure_output_dir
+
+REQUIRED_COLUMNS = ['case_id', 'timestamp', 'stage_responsible', 'changed_field', 'activity']
 
 
 def analyze_responsible_change(logfile_path, output_dir):
-    df = pd.read_csv(logfile_path)
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-
+    df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='responsible change analysis')
     df.sort_values(['case_id', 'timestamp'], inplace=True)
 
     df['prev_responsible'] = df.groupby('case_id')['stage_responsible'].shift(1)

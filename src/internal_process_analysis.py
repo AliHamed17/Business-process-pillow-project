@@ -1,14 +1,14 @@
 import argparse
 from pathlib import Path
 
-import pandas as pd
+from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 
-from cli_utils import ensure_exists, ensure_output_dir
+
+REQUIRED_COLUMNS = ['case_id', 'activity', 'event_type', 'timestamp']
 
 
 def analyze_internal_process(logfile_path, output_dir):
-    df = pd.read_csv(logfile_path)
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='internal process analysis')
     df.sort_values(['case_id', 'timestamp'], inplace=True)
 
     internal_updates = df.groupby(['case_id', 'activity']).agg(

@@ -1,4 +1,8 @@
 import argparse
+import json
+from pathlib import Path
+
+import pandas as pd
 
 from cli_utils import ensure_exists, ensure_output_dir
 from data_preprocessing import preprocess_logs
@@ -16,6 +20,45 @@ def parse_args():
     parser.add_argument("--output-dir", default="outputs", help="Directory for all generated artifacts")
     parser.add_argument("--top-variants", type=int, default=20, help="Number of variants to export")
     return parser.parse_args()
+
+
+def _safe_row_count(path: Path) -> int | None:
+    if not path.exists() or path.suffix.lower() != '.csv':
+        return None
+    try:
+        return int(len(pd.read_csv(path)))
+    except Exception:
+        return None
+
+
+def _write_pipeline_manifest(output_dir: Path) -> None:
+    tracked_files = [
+        'cleaned_log.csv',
+        'event_log.xes',
+        'preprocessing_quality_report.json',
+        'variants.csv',
+        'case_performance.csv',
+        'bottleneck_analysis.csv',
+        'workload_analysis.csv',
+        'responsible_change_analysis.csv',
+        'internal_process_analysis.csv',
+    ]
+
+    manifest = []
+    for name in tracked_files:
+        file_path = output_dir / name
+        manifest.append(
+            {
+                'file': name,
+                'exists': file_path.exists(),
+                'size_bytes': file_path.stat().st_size if file_path.exists() else None,
+                'row_count': _safe_row_count(file_path),
+            }
+        )
+
+    manifest_path = output_dir / 'pipeline_manifest.json'
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
+    print(f"Pipeline manifest written to {manifest_path}")
 
 
 def main():
@@ -44,6 +87,7 @@ def main():
     print("Step 6/6: Internal process analysis")
     analyze_internal_process(cleaned_log, output_dir)
 
+    _write_pipeline_manifest(output_dir)
     print(f"Pipeline completed successfully. Outputs available in: {output_dir}")
 
 

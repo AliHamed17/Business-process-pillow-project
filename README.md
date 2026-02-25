@@ -29,3 +29,9 @@ This repository contains the full source code and analysis for the business proc
 - Variant frequencies.
 - Workload vs Delay correlations.
 - Tracks assignment transitions.
+
+### New robustness features
+- Automatic required-column validation with clear error messages.
+- Data-quality report after preprocessing: `outputs/preprocessing_quality_report.json`.
+- End-to-end output manifest: `outputs/pipeline_manifest.json`.
+
