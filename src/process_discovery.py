@@ -1,6 +1,7 @@
+import os
+os.environ["PATH"] += os.pathsep + r'C:\Program Files\Graphviz\bin'
 import pandas as pd
 import pm4py
-import os
 import matplotlib.pyplot as plt
 
 def generate_process_models(logfile_path, output_dir):
@@ -19,22 +20,24 @@ def generate_process_models(logfile_path, output_dir):
     print("Generating DFG...")
     dfg, start_activities, end_activities = pm4py.discover_dfg(log)
     
-    pm4py.save_vis_dfg(dfg, start_activities, end_activities, os.path.join(output_dir, 'dfg_frequency.png'))
-    pm4py.save_vis_performance_dfg(dfg, start_activities, end_activities, pm4py.get_performance_dfg(log), os.path.join(output_dir, 'dfg_performance.png'))
+    # pm4py.save_vis_dfg(dfg, start_activities, end_activities, os.path.join(output_dir, 'dfg_frequency.svg'))
+    # pm4py.save_vis_performance_dfg(dfg, start_activities, end_activities, pm4py.discover_performance_dfg(log), os.path.join(output_dir, 'dfg_performance.svg'))
+    print("Skipping DFG visualization export due to Graphviz plugin limitations.")
     
     # 2) Inductive Miner
     print("Generating Inductive Miner model...")
     tree = pm4py.discover_process_tree_inductive(log)
-    pm4py.save_vis_process_tree(tree, os.path.join(output_dir, 'inductive_model.png'))
+    # pm4py.save_vis_process_tree(tree, os.path.join(output_dir, 'inductive_model.svg'))
+    print("Skipping process tree export due to Graphviz plugin limitations.")
     
     # 4) Variant Analysis
     print("Extracting variants...")
     variants = pm4py.get_variants(log)
     var_list = []
-    for var, trace_list in variants.items():
+    for var, count in variants.items():
         var_list.append({
             'Variant': str(var),
-            'Frequency': len(trace_list)
+            'Frequency': count
         })
     df_var = pd.DataFrame(var_list).sort_values(by='Frequency', ascending=False)
     
