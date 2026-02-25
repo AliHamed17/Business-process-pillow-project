@@ -1,50 +1,51 @@
-import os
-os.environ["PATH"] += os.pathsep + r'C:\Program Files\Graphviz\bin'
+import argparse
+from pathlib import Path
+
 import pandas as pd
 import pm4py
-import matplotlib.pyplot as plt
 
-def generate_process_models(logfile_path, output_dir):
+from cli_utils import ensure_exists, ensure_output_dir
+
+
+def generate_process_models(logfile_path, output_dir, top_variants=20):
     """
-    Generates process discovery models (DFG, Inductive tree)
+    Generates process discovery models (DFG, Inductive tree) and variants export.
     """
     print(f"Reading cleaned log from {logfile_path}")
     df = pd.read_csv(logfile_path)
-    # Ensure datetime parsing
     df['timestamp'] = pd.to_datetime(df['timestamp'])
-    
-    # pm4py requires standard format
+
     log = pm4py.format_dataframe(df, case_id='case_id', activity_key='activity', timestamp_key='timestamp')
-    
-    # 1) DFG
+
     print("Generating DFG...")
-    dfg, start_activities, end_activities = pm4py.discover_dfg(log)
-    
-    # pm4py.save_vis_dfg(dfg, start_activities, end_activities, os.path.join(output_dir, 'dfg_frequency.svg'))
-    # pm4py.save_vis_performance_dfg(dfg, start_activities, end_activities, pm4py.discover_performance_dfg(log), os.path.join(output_dir, 'dfg_performance.svg'))
+    _dfg, _start_activities, _end_activities = pm4py.discover_dfg(log)
     print("Skipping DFG visualization export due to Graphviz plugin limitations.")
-    
-    # 2) Inductive Miner
+
     print("Generating Inductive Miner model...")
-    tree = pm4py.discover_process_tree_inductive(log)
-    # pm4py.save_vis_process_tree(tree, os.path.join(output_dir, 'inductive_model.svg'))
+    _tree = pm4py.discover_process_tree_inductive(log)
     print("Skipping process tree export due to Graphviz plugin limitations.")
-    
-    # 4) Variant Analysis
+
     print("Extracting variants...")
     variants = pm4py.get_variants(log)
-    var_list = []
-    for var, count in variants.items():
-        var_list.append({
-            'Variant': str(var),
-            'Frequency': count
-        })
-    df_var = pd.DataFrame(var_list).sort_values(by='Frequency', ascending=False)
-    
-    df_var.head(20).to_csv(os.path.join(output_dir, 'variants.csv'), index=False)
-    print("Process discovery complete.")
+    df_var = pd.DataFrame(
+        [{"Variant": str(var), "Frequency": count} for var, count in variants.items()]
+    ).sort_values(by='Frequency', ascending=False)
+
+    out_path = Path(output_dir) / 'variants.csv'
+    df_var.head(top_variants).to_csv(out_path, index=False)
+    print(f"Process discovery complete. Saved top {top_variants} variants to {out_path}")
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run process discovery on a cleaned event log")
+    parser.add_argument("logfile", help="Path to cleaned_log.csv")
+    parser.add_argument("--output-dir", default="outputs", help="Directory for generated outputs")
+    parser.add_argument("--top-variants", type=int, default=20, help="Number of top variants to export")
+    return parser.parse_args()
+
 
 if __name__ == "__main__":
-    out = r"c:\Users\ahamed\business process pillow\haifa-municipality-process-mining\outputs"
-    f = os.path.join(out, "cleaned_log.csv")
-    generate_process_models(f, out)
+    args = parse_args()
+    logfile = ensure_exists(args.logfile, "Cleaned log")
+    output_dir = ensure_output_dir(args.output_dir)
+    generate_process_models(logfile, output_dir, top_variants=args.top_variants)

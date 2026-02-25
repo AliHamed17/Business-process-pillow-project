@@ -11,13 +11,16 @@ This repository contains the full source code and analysis for the business proc
 
 ## Usage
 1. Install dependencies: `pip install -r requirements.txt`
-2. Run data preprocessing: `python src/data_preprocessing.py`
-3. Run discovery: `python src/process_discovery.py`
-4. Run analyses:
-   - `python src/performance_analysis.py`
-   - `python src/workload_analysis.py`
-   - `python src/responsible_change_analysis.py`
-   - `python src/internal_process_analysis.py`
+2. Run the full pipeline:
+   - `python src/run_pipeline.py <excel_part_1.xlsx> <excel_part_2.xlsx> --output-dir outputs`
+
+### Run scripts individually
+- `python src/data_preprocessing.py <excel_part_1.xlsx> <excel_part_2.xlsx> --output-dir outputs`
+- `python src/process_discovery.py outputs/cleaned_log.csv --output-dir outputs --top-variants 20`
+- `python src/performance_analysis.py outputs/cleaned_log.csv --output-dir outputs`
+- `python src/workload_analysis.py outputs/cleaned_log.csv --output-dir outputs`
+- `python src/responsible_change_analysis.py outputs/cleaned_log.csv --output-dir outputs`
+- `python src/internal_process_analysis.py outputs/cleaned_log.csv --output-dir outputs`
 
 ## Features
 - End-to-end Process Mining using `pandas` and `pm4py`.
