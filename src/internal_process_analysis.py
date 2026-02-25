@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import finalize_and_save, set_plot_style
+    from plot_utils import annotate_bars, finalize_and_save, set_plot_style
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import finalize_and_save, set_plot_style
+    from .plot_utils import annotate_bars, finalize_and_save, set_plot_style
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'event_type', 'timestamp']
@@ -24,6 +24,7 @@ def _save_internal_process_plots(stage_complexity, output_dir: Path) -> None:
         ax.set_title('Top 10 Activities by Rework Ratio')
         ax.set_xlabel('Rework Ratio')
         ax.set_ylabel('Activity')
+        annotate_bars(ax, horizontal=True)
         finalize_and_save(fig, output_dir / 'internal_rework_ratio_top10.png')
 
     # Scatter to inspect duration-vs-rework relationship

@@ -7,10 +7,10 @@ import pm4py
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import finalize_and_save, set_plot_style
+    from plot_utils import annotate_bars, finalize_and_save, set_plot_style, truncate_label
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import finalize_and_save, set_plot_style
+    from .plot_utils import annotate_bars, finalize_and_save, set_plot_style, truncate_label
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
@@ -30,25 +30,26 @@ def _variant_frequency(variant_payload):
 
 def _save_discovery_plots(df: pd.DataFrame, df_var: pd.DataFrame, output_dir: Path) -> None:
     set_plot_style()
-    act_freq = df['activity'].value_counts().head(15)
+    act_freq = df['activity'].value_counts().head(15).sort_values(ascending=True)
     if not act_freq.empty:
-        fig, ax = plt.subplots(figsize=(10, 5))
-        ax.bar(act_freq.index.astype(str), act_freq.values, color='#4C72B0')
-        ax.set_title('Top 15 Activity Frequency')
-        ax.set_ylabel('Event Count')
-        ax.tick_params(axis='x', rotation=45)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        labels = [truncate_label(x, 42) for x in act_freq.index]
+        ax.barh(labels, act_freq.values, color='#4C72B0')
+        ax.set_title('Top 15 Activities by Event Frequency')
+        ax.set_xlabel('Event Count')
+        annotate_bars(ax, horizontal=True, fmt='{:.0f}')
         finalize_and_save(fig, output_dir / 'activity_frequency_top15.png')
 
-    top_variants = df_var.head(15)
+    top_variants = df_var.head(15).iloc[::-1]
     if not top_variants.empty:
-        fig, ax = plt.subplots(figsize=(10, 5))
-        ax.bar(range(len(top_variants)), top_variants['Frequency'], color='#55A868')
+        fig, ax = plt.subplots(figsize=(10, 6))
+        labels = [f"V{idx+1}" for idx in range(len(top_variants))]
+        ax.barh(labels, top_variants['Frequency'], color='#55A868')
         ax.set_title('Top Variant Frequency')
-        ax.set_xlabel('Variant Rank')
-        ax.set_ylabel('Frequency')
+        ax.set_xlabel('Frequency')
+        annotate_bars(ax, horizontal=True, fmt='{:.0f}')
         finalize_and_save(fig, output_dir / 'variant_frequency_top15.png')
 
-    # Transition heatmap for top activities to expose local flow intensity
     top_activities = set(df['activity'].value_counts().head(12).index)
     transitions = df[['case_id', 'activity']].copy()
     transitions['next_activity'] = transitions.groupby('case_id')['activity'].shift(-1)
@@ -58,19 +59,18 @@ def _save_discovery_plots(df: pd.DataFrame, df_var: pd.DataFrame, output_dir: Pa
     ]
     if not transitions.empty:
         matrix = pd.crosstab(transitions['activity'], transitions['next_activity'])
-        fig, ax = plt.subplots(figsize=(9, 7))
+        fig, ax = plt.subplots(figsize=(10, 8))
         im = ax.imshow(matrix.values, aspect='auto', cmap='Blues')
         ax.set_title('Transition Heatmap (Top Activities)')
         ax.set_xticks(range(len(matrix.columns)))
         ax.set_yticks(range(len(matrix.index)))
-        ax.set_xticklabels(matrix.columns, rotation=45, ha='right', fontsize=8)
-        ax.set_yticklabels(matrix.index, fontsize=8)
+        ax.set_xticklabels([truncate_label(x, 22) for x in matrix.columns], rotation=45, ha='right', fontsize=8)
+        ax.set_yticklabels([truncate_label(x, 22) for x in matrix.index], fontsize=8)
         fig.colorbar(im, ax=ax, label='Transition Count')
         finalize_and_save(fig, output_dir / 'activity_transition_heatmap_top12.png')
 
 
 def generate_process_models(logfile_path, output_dir, top_variants=20):
-    """Generates process discovery models (DFG, Inductive tree) and variants export."""
     if top_variants < 1:
         raise ValueError('top_variants must be >= 1')
 

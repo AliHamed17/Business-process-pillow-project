@@ -42,6 +42,7 @@ This repository contains the full source code and analysis for the business proc
 
 
 ### Visualization outputs
+- All charts now use a consistent style, improved label readability, and value annotations for easier human interpretation.
 - `outputs/activity_frequency_top15.png`: most frequent activities in the event log.
 - `outputs/activity_transition_heatmap_top12.png`: transition intensity between top activities.
 - `outputs/variant_frequency_top15.png`: top process variant frequencies.

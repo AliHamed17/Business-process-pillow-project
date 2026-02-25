@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import finalize_and_save, set_plot_style
+    from plot_utils import annotate_bars, finalize_and_save, set_plot_style
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import finalize_and_save, set_plot_style
+    from .plot_utils import annotate_bars, finalize_and_save, set_plot_style
 
 
 REQUIRED_COLUMNS = ['case_id', 'timestamp', 'stage_responsible', 'changed_field', 'activity']
@@ -22,6 +22,7 @@ def _save_responsible_change_plots(case_changes, comparison, output_dir: Path) -
         ax.bar(labels, comparison['mean'], color=['#4C72B0', '#DD8452'])
         ax.set_title('Average Cycle Time by Reassignment')
         ax.set_ylabel('Average Cycle Time (Days)')
+        annotate_bars(ax, horizontal=False)
         finalize_and_save(fig, output_dir / 'responsible_change_cycle_time_comparison.png')
 
     if not case_changes.empty:
