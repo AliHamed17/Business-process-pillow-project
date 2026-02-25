@@ -35,3 +35,7 @@ This repository contains the full source code and analysis for the business proc
 - Data-quality report after preprocessing: `outputs/preprocessing_quality_report.json`.
 - End-to-end output manifest: `outputs/pipeline_manifest.json`.
 
+
+## Development checks
+- Run static import/bytecode check: `python -m compileall src`
+- Run unit tests: `python -m unittest discover -s tests -p "test_*.py"`

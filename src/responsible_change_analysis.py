@@ -1,7 +1,10 @@
 import argparse
 from pathlib import Path
 
-from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+try:
+    from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+except ModuleNotFoundError:  # package-import fallback for tests
+    from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 
 
 REQUIRED_COLUMNS = ['case_id', 'timestamp', 'stage_responsible', 'changed_field', 'activity']

@@ -6,7 +6,10 @@ import numpy as np
 import pandas as pd
 import pm4py
 
-from cli_utils import ensure_exists, ensure_output_dir, validate_columns
+try:
+    from cli_utils import ensure_exists, ensure_output_dir, validate_columns
+except ModuleNotFoundError:  # package-import fallback for tests
+    from .cli_utils import ensure_exists, ensure_output_dir, validate_columns
 
 
 SOURCE_REQUIRED_COLUMNS = [
@@ -112,6 +115,8 @@ def preprocess_logs(file_path1, file_path2, output_dir):
         'dropped_duplicates': int(dropped_duplicates),
         'unique_cases': int(df['case_id'].nunique()),
         'unique_activities': int(df['activity'].nunique()),
+        'timestamp_min': df['timestamp'].min().isoformat() if not df.empty else None,
+        'timestamp_max': df['timestamp'].max().isoformat() if not df.empty else None,
     }
     quality_path = Path(output_dir) / 'preprocessing_quality_report.json'
     quality_path.write_text(json.dumps(quality_report, indent=2, ensure_ascii=False), encoding='utf-8')

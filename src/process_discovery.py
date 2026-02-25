@@ -4,7 +4,10 @@ from pathlib import Path
 import pandas as pd
 import pm4py
 
-from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+try:
+    from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+except ModuleNotFoundError:  # package-import fallback for tests
+    from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
@@ -13,14 +16,20 @@ REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
 def _variant_frequency(variant_payload):
     """Normalize pm4py variant payload to an integer frequency across pm4py versions."""
     if isinstance(variant_payload, int):
-        return variant_payload
+        return max(variant_payload, 0)
     if isinstance(variant_payload, (list, tuple, set)):
         return len(variant_payload)
-    return int(variant_payload)
+    try:
+        return max(int(variant_payload), 0)
+    except (TypeError, ValueError):
+        return 0
 
 
 def generate_process_models(logfile_path, output_dir, top_variants=20):
     """Generates process discovery models (DFG, Inductive tree) and variants export."""
+    if top_variants < 1:
+        raise ValueError('top_variants must be >= 1')
+
     print(f"Reading cleaned log from {logfile_path}")
     df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='process discovery')
 

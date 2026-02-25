@@ -1,16 +1,26 @@
 import argparse
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
 
-from cli_utils import ensure_exists, ensure_output_dir
-from data_preprocessing import preprocess_logs
-from internal_process_analysis import analyze_internal_process
-from performance_analysis import analyze_performance
-from process_discovery import generate_process_models
-from responsible_change_analysis import analyze_responsible_change
-from workload_analysis import analyze_workload
+try:
+    from cli_utils import ensure_exists, ensure_output_dir
+    from data_preprocessing import preprocess_logs
+    from internal_process_analysis import analyze_internal_process
+    from performance_analysis import analyze_performance
+    from process_discovery import generate_process_models
+    from responsible_change_analysis import analyze_responsible_change
+    from workload_analysis import analyze_workload
+except ModuleNotFoundError:  # package-import fallback for tests
+    from .cli_utils import ensure_exists, ensure_output_dir
+    from .data_preprocessing import preprocess_logs
+    from .internal_process_analysis import analyze_internal_process
+    from .performance_analysis import analyze_performance
+    from .process_discovery import generate_process_models
+    from .responsible_change_analysis import analyze_responsible_change
+    from .workload_analysis import analyze_workload
 
 
 def parse_args():
@@ -31,7 +41,7 @@ def _safe_row_count(path: Path) -> int | None:
         return None
 
 
-def _write_pipeline_manifest(output_dir: Path) -> None:
+def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
     tracked_files = [
         'cleaned_log.csv',
         'event_log.xes',
@@ -44,10 +54,14 @@ def _write_pipeline_manifest(output_dir: Path) -> None:
         'internal_process_analysis.csv',
     ]
 
-    manifest = []
+    manifest = {
+        'generated_at_utc': datetime.now(timezone.utc).isoformat(),
+        'top_variants': top_variants,
+        'artifacts': [],
+    }
     for name in tracked_files:
         file_path = output_dir / name
-        manifest.append(
+        manifest['artifacts'].append(
             {
                 'file': name,
                 'exists': file_path.exists(),
@@ -87,7 +101,7 @@ def main():
     print("Step 6/6: Internal process analysis")
     analyze_internal_process(cleaned_log, output_dir)
 
-    _write_pipeline_manifest(output_dir)
+    _write_pipeline_manifest(output_dir, top_variants=args.top_variants)
     print(f"Pipeline completed successfully. Outputs available in: {output_dir}")
 
 

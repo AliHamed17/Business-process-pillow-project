@@ -3,7 +3,10 @@ from pathlib import Path
 
 import pandas as pd
 
-from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+try:
+    from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+except ModuleNotFoundError:  # package-import fallback for tests
+    from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 
 
 REQUIRED_COLUMNS = ['case_id', 'department', 'timestamp', 'activity']
