@@ -1,0 +1,5 @@
+Feature,Importance
+dept_enc,0.5036425388233141
+activity_enc,0.22454374514171113
+event_index,0.15924461187898814
+elapsed_days,0.11256910415598657

@@ -1,0 +1,3 @@
+﻿Heuristics Net – Main Process Arcs
+==================================================
+Could not extract dependency graph details: 'HeuristicsNet' object has no attribute 'dependency_graph'

@@ -1,0 +1,92 @@
+{
+  "rf_test_auc": 0.9173,
+  "rf_cv_auc": 0.9055,
+  "xgb_test_auc": 0.9223,
+  "xgb_cv_auc": 0.9069,
+  "n_train": 643,
+  "n_test": 161,
+  "class_balance": {
+    "approved_pct": 52.5,
+    "cancelled_pct": 47.5
+  },
+  "top_rf_features": [
+    {
+      "Feature": "Unique Stages",
+      "RF_Importance": 0.331012048897913
+    },
+    {
+      "Feature": "Stage Responsible",
+      "RF_Importance": 0.14787725204586172
+    },
+    {
+      "Feature": "Total Events",
+      "RF_Importance": 0.1399216044098489
+    },
+    {
+      "Feature": "Cycle Time (days)",
+      "RF_Importance": 0.11871130149981117
+    },
+    {
+      "Feature": "Initial Wait (days)",
+      "RF_Importance": 0.0921385964367613
+    },
+    {
+      "Feature": "Department",
+      "RF_Importance": 0.08462014519429856
+    },
+    {
+      "Feature": "Has CEO Stage",
+      "RF_Importance": 0.058708757649210026
+    },
+    {
+      "Feature": "Has Budget Stage",
+      "RF_Importance": 0.022745713347804498
+    },
+    {
+      "Feature": "Position Type",
+      "RF_Importance": 0.00426458051849079
+    }
+  ],
+  "top_dept_by_cancellation": [
+    {
+      "department": "רשות הספורט",
+      "cancel_rate": 0.76
+    },
+    {
+      "department": "הנהלת האגף",
+      "cancel_rate": 0.75
+    },
+    {
+      "department": "תיכון עירוני א\"",
+      "cancel_rate": 0.7142857142857143
+    },
+    {
+      "department": "המחלקה לרכש ואספקה",
+      "cancel_rate": 0.6666666666666666
+    },
+    {
+      "department": "המחלקה למשפחה",
+      "cancel_rate": 0.6363636363636364
+    },
+    {
+      "department": "המחלקה לנוער",
+      "cancel_rate": 0.631578947368421
+    },
+    {
+      "department": "המחלקה לאזרחים ותיקי",
+      "cancel_rate": 0.625
+    },
+    {
+      "department": "חופי רחצה עירוניים",
+      "cancel_rate": 0.6153846153846154
+    },
+    {
+      "department": "המחלקה לתובלה",
+      "cancel_rate": 0.6086956521739131
+    },
+    {
+      "department": "מוסדות-בתי\"ס מיוחדים",
+      "cancel_rate": 0.6
+    }
+  ]
+}
