@@ -21,6 +21,7 @@ class TestPipelineHelpers(unittest.TestCase):
             self.assertTrue(any(item['file'] == 'activity_frequency_top15.png' for item in payload['artifacts']))
             self.assertTrue(any(item['file'] == 'executive_summary.json' for item in payload['artifacts']))
             self.assertTrue(any(item['file'] == 'workload_heatmap_department_week.png' for item in payload['artifacts']))
+            self.assertTrue(any(item['file'] == 'alignment_report.json' for item in payload['artifacts']))
 
 
 if __name__ == '__main__':

@@ -53,6 +53,7 @@ This repository contains the full source code and analysis for the business proc
 - `outputs/responsible_change_cycle_time_comparison.png`, `outputs/responsible_change_cycle_time_boxplot.png`, and `outputs/responsible_change_count_distribution.png`: reassignment impact and frequency.
 - `outputs/internal_rework_ratio_top10.png` and `outputs/internal_rework_duration_scatter.png`: rework hotspots and duration relationship.
 - `outputs/executive_summary.json`, `outputs/executive_summary.md`, and `outputs/executive_dashboard.png`: KPI summary, prioritized recommendations, and executive visual dashboard.
+- `outputs/alignment_report.json` and `outputs/alignment_report.md`: explicit business-question coverage checklist and overall alignment score.
 
 ### How to review and analyze the plots
 1. Start with `activity_frequency_top15.png` and `variant_frequency_top15.png` to understand dominant flow patterns.
@@ -63,3 +64,8 @@ This repository contains the full source code and analysis for the business proc
 6. Use `internal_rework_ratio_top10.png` to prioritize stages for SOP refinement and automation.
 7. Inspect `executive_dashboard.png` for a high-level bottleneck and priority overview.
 8. Read `executive_summary.md` for a concise KPI snapshot and ranked improvement list.
+
+
+## Alignment to final project goals
+- Run the full pipeline and then review `outputs/alignment_report.md`.
+- The report checks coverage for all requested business questions (delays by stage/role/user/department/outcome, variants, workload-speed, ownership changes, internal subprocesses, screening/committee hotspots, and operational proposals).

@@ -7,21 +7,25 @@ import pandas as pd
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir
+    from bottleneck_segmentation_analysis import analyze_bottleneck_segmentation
     from data_preprocessing import preprocess_logs
     from internal_process_analysis import analyze_internal_process
     from performance_analysis import analyze_performance
     from process_discovery import generate_process_models
     from responsible_change_analysis import analyze_responsible_change
     from result_insights import generate_result_insights
+    from alignment_report import generate_alignment_report
     from workload_analysis import analyze_workload
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir
+    from .bottleneck_segmentation_analysis import analyze_bottleneck_segmentation
     from .data_preprocessing import preprocess_logs
     from .internal_process_analysis import analyze_internal_process
     from .performance_analysis import analyze_performance
     from .process_discovery import generate_process_models
     from .responsible_change_analysis import analyze_responsible_change
     from .result_insights import generate_result_insights
+    from .alignment_report import generate_alignment_report
     from .workload_analysis import analyze_workload
 
 
@@ -54,6 +58,12 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'workload_analysis.csv',
         'responsible_change_analysis.csv',
         'internal_process_analysis.csv',
+        'bottleneck_by_stage.csv',
+        'bottleneck_by_stage_owner.csv',
+        'bottleneck_by_performer.csv',
+        'cycle_time_by_department.csv',
+        'cycle_time_by_request_status.csv',
+        'keyword_bottleneck_analysis.csv',
         'activity_frequency_top15.png',
         'activity_transition_heatmap_top12.png',
         'variant_frequency_top15.png',
@@ -67,10 +77,17 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'responsible_change_count_distribution.png',
         'internal_rework_ratio_top10.png',
         'internal_rework_duration_scatter.png',
+        'bottleneck_by_stage_owner_top10.png',
+        'bottleneck_by_performer_top10.png',
+        'cycle_time_by_request_status.png',
+        'keyword_bottleneck_waits.png',
         'executive_summary.json',
         'executive_summary.md',
         'executive_dashboard.png',
+        'alignment_report.json',
+        'alignment_report.md',
     ]
+
 
 
     manifest = {
@@ -100,28 +117,34 @@ def main():
     file2 = ensure_exists(args.file2, "Excel file 2")
     output_dir = ensure_output_dir(args.output_dir)
 
-    print("Step 1/7: Data preprocessing")
+    print("Step 1/9: Data preprocessing")
     preprocess_logs(file1, file2, output_dir)
 
     cleaned_log = output_dir / "cleaned_log.csv"
 
-    print("Step 2/7: Process discovery")
+    print("Step 2/9: Process discovery")
     generate_process_models(cleaned_log, output_dir, top_variants=args.top_variants)
 
-    print("Step 3/7: Performance analysis")
+    print("Step 3/9: Performance analysis")
     analyze_performance(cleaned_log, output_dir)
 
-    print("Step 4/7: Workload analysis")
+    print("Step 4/9: Workload analysis")
     analyze_workload(cleaned_log, output_dir)
 
-    print("Step 5/7: Responsible change analysis")
+    print("Step 5/9: Responsible change analysis")
     analyze_responsible_change(cleaned_log, output_dir)
 
-    print("Step 6/7: Internal process analysis")
+    print("Step 6/9: Internal process analysis")
     analyze_internal_process(cleaned_log, output_dir)
 
-    print("Step 7/7: Executive summary")
+    print("Step 7/9: Bottleneck segmentation analysis")
+    analyze_bottleneck_segmentation(cleaned_log, output_dir)
+
+    print("Step 8/9: Executive summary")
     generate_result_insights(output_dir)
+
+    print("Step 9/9: Alignment checklist report")
+    generate_alignment_report(output_dir)
 
     _write_pipeline_manifest(output_dir, top_variants=args.top_variants)
     print(f"Pipeline completed successfully. Outputs available in: {output_dir}")
