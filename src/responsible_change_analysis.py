@@ -5,23 +5,24 @@ import matplotlib.pyplot as plt
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+    from plot_utils import finalize_and_save, set_plot_style
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+    from .plot_utils import finalize_and_save, set_plot_style
 
 
 REQUIRED_COLUMNS = ['case_id', 'timestamp', 'stage_responsible', 'changed_field', 'activity']
 
 
 def _save_responsible_change_plots(case_changes, comparison, output_dir: Path) -> None:
+    set_plot_style()
     if not comparison.empty:
         fig, ax = plt.subplots(figsize=(6.5, 4.5))
         labels = comparison['has_reassignment'].map({False: 'No Reassignment', True: 'Has Reassignment'})
-        ax.bar(labels, comparison['mean'])
+        ax.bar(labels, comparison['mean'], color=['#4C72B0', '#DD8452'])
         ax.set_title('Average Cycle Time by Reassignment')
         ax.set_ylabel('Average Cycle Time (Days)')
-        fig.tight_layout()
-        fig.savefig(output_dir / 'responsible_change_cycle_time_comparison.png', dpi=150)
-        plt.close(fig)
+        finalize_and_save(fig, output_dir / 'responsible_change_cycle_time_comparison.png')
 
     if not case_changes.empty:
         fig, ax = plt.subplots(figsize=(6.5, 4.5))
@@ -33,9 +34,16 @@ def _save_responsible_change_plots(case_changes, comparison, output_dir: Path) -
             ax.boxplot(box_data, labels=['No Reassignment', 'Has Reassignment'])
             ax.set_title('Cycle Time Distribution by Reassignment')
             ax.set_ylabel('Cycle Time (Days)')
-            fig.tight_layout()
-            fig.savefig(output_dir / 'responsible_change_cycle_time_boxplot.png', dpi=150)
-        plt.close(fig)
+            finalize_and_save(fig, output_dir / 'responsible_change_cycle_time_boxplot.png')
+        else:
+            plt.close(fig)
+
+        fig, ax = plt.subplots(figsize=(7.5, 4.5))
+        case_changes['reassignment_count'].plot(kind='hist', bins=20, ax=ax, color='#55A868')
+        ax.set_title('Distribution of Reassignment Count per Case')
+        ax.set_xlabel('Reassignment Count')
+        ax.set_ylabel('Case Count')
+        finalize_and_save(fig, output_dir / 'responsible_change_count_distribution.png')
 
 
 def analyze_responsible_change(logfile_path, output_dir):

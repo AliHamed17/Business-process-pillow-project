@@ -5,27 +5,36 @@ import matplotlib.pyplot as plt
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+    from plot_utils import finalize_and_save, set_plot_style
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+    from .plot_utils import finalize_and_save, set_plot_style
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'event_type', 'timestamp']
 
 
 def _save_internal_process_plots(stage_complexity, output_dir: Path) -> None:
+    set_plot_style()
     top_rework = stage_complexity.sort_values('rework_ratio', ascending=False).head(10)
-    if top_rework.empty:
-        return
+    if not top_rework.empty:
+        fig, ax = plt.subplots(figsize=(9, 5))
+        ax.barh(top_rework['activity'].astype(str), top_rework['rework_ratio'], color='#8172B2')
+        ax.invert_yaxis()
+        ax.set_title('Top 10 Activities by Rework Ratio')
+        ax.set_xlabel('Rework Ratio')
+        ax.set_ylabel('Activity')
+        finalize_and_save(fig, output_dir / 'internal_rework_ratio_top10.png')
 
-    fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(top_rework['activity'].astype(str), top_rework['rework_ratio'])
-    ax.invert_yaxis()
-    ax.set_title('Top 10 Activities by Rework Ratio')
-    ax.set_xlabel('Rework Ratio')
-    ax.set_ylabel('Activity')
-    fig.tight_layout()
-    fig.savefig(output_dir / 'internal_rework_ratio_top10.png', dpi=150)
-    plt.close(fig)
+    # Scatter to inspect duration-vs-rework relationship
+    scatter_df = stage_complexity.dropna(subset=['rework_ratio', 'avg_duration_days'])
+    if not scatter_df.empty:
+        fig, ax = plt.subplots(figsize=(8, 5))
+        ax.scatter(scatter_df['avg_duration_days'], scatter_df['rework_ratio'], alpha=0.75, color='#C44E52')
+        ax.set_title('Stage Duration vs Rework Ratio')
+        ax.set_xlabel('Average Stage Duration (Days)')
+        ax.set_ylabel('Rework Ratio')
+        finalize_and_save(fig, output_dir / 'internal_rework_duration_scatter.png')
 
 
 def analyze_internal_process(logfile_path, output_dir):

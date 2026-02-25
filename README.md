@@ -43,13 +43,16 @@ This repository contains the full source code and analysis for the business proc
 
 ### Visualization outputs
 - `outputs/activity_frequency_top15.png`: most frequent activities in the event log.
+- `outputs/activity_transition_heatmap_top12.png`: transition intensity between top activities.
 - `outputs/variant_frequency_top15.png`: top process variant frequencies.
 - `outputs/case_cycle_time_distribution.png`: case cycle time distribution.
 - `outputs/bottleneck_top10_mean_wait.png`: top bottleneck activities by mean wait time.
+- `outputs/bottleneck_wait_distribution_boxplot.png`: wait-time spread for top bottleneck activities.
 - `outputs/workload_trend_by_department.png`: department open-case trend with moving average.
-- `outputs/responsible_change_cycle_time_comparison.png` and `outputs/responsible_change_cycle_time_boxplot.png`: impact of reassignments on cycle time.
-- `outputs/internal_rework_ratio_top10.png`: activities with highest rework ratio.
-- `outputs/executive_summary.json` and `outputs/executive_summary.md`: auto-generated KPI summary and prioritized improvement recommendations.
+- `outputs/workload_heatmap_department_week.png`: workload heatmap by department and week.
+- `outputs/responsible_change_cycle_time_comparison.png`, `outputs/responsible_change_cycle_time_boxplot.png`, and `outputs/responsible_change_count_distribution.png`: reassignment impact and frequency.
+- `outputs/internal_rework_ratio_top10.png` and `outputs/internal_rework_duration_scatter.png`: rework hotspots and duration relationship.
+- `outputs/executive_summary.json`, `outputs/executive_summary.md`, and `outputs/executive_dashboard.png`: KPI summary, prioritized recommendations, and executive visual dashboard.
 
 ### How to review and analyze the plots
 1. Start with `activity_frequency_top15.png` and `variant_frequency_top15.png` to understand dominant flow patterns.
@@ -58,4 +61,5 @@ This repository contains the full source code and analysis for the business proc
 4. Compare departments in `workload_trend_by_department.png` to detect load spikes and imbalance.
 5. Validate whether reassignments are associated with slower outcomes using responsible-change plots.
 6. Use `internal_rework_ratio_top10.png` to prioritize stages for SOP refinement and automation.
-7. Read `executive_summary.md` for a concise KPI snapshot and ranked improvement list.
+7. Inspect `executive_dashboard.png` for a high-level bottleneck and priority overview.
+8. Read `executive_summary.md` for a concise KPI snapshot and ranked improvement list.

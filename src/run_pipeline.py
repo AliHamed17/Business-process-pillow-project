@@ -55,16 +55,23 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'responsible_change_analysis.csv',
         'internal_process_analysis.csv',
         'activity_frequency_top15.png',
+        'activity_transition_heatmap_top12.png',
         'variant_frequency_top15.png',
         'case_cycle_time_distribution.png',
         'bottleneck_top10_mean_wait.png',
+        'bottleneck_wait_distribution_boxplot.png',
         'workload_trend_by_department.png',
+        'workload_heatmap_department_week.png',
         'responsible_change_cycle_time_comparison.png',
         'responsible_change_cycle_time_boxplot.png',
+        'responsible_change_count_distribution.png',
         'internal_rework_ratio_top10.png',
+        'internal_rework_duration_scatter.png',
         'executive_summary.json',
         'executive_summary.md',
+        'executive_dashboard.png',
     ]
+
 
     manifest = {
         'generated_at_utc': datetime.now(timezone.utc).isoformat(),

@@ -1,7 +1,13 @@
 import json
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pandas as pd
+
+try:
+    from plot_utils import finalize_and_save, set_plot_style
+except ModuleNotFoundError:  # package-import fallback for tests
+    from .plot_utils import finalize_and_save, set_plot_style
 
 
 def _read_csv_if_exists(path: Path) -> pd.DataFrame:
@@ -11,6 +17,37 @@ def _read_csv_if_exists(path: Path) -> pd.DataFrame:
         return pd.read_csv(path)
     except Exception:
         return pd.DataFrame()
+
+
+def _save_executive_dashboard(summary: dict, output_dir: Path) -> None:
+    set_plot_style()
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    top_b = summary.get('top_bottlenecks', [])[:5]
+    if top_b:
+        labels = [x['activity'] for x in top_b]
+        values = [x['mean_wait_days'] for x in top_b]
+        axes[0].barh(labels, values, color='#C44E52')
+        axes[0].invert_yaxis()
+        axes[0].set_title('Top Bottlenecks')
+        axes[0].set_xlabel('Mean Wait (Days)')
+    else:
+        axes[0].text(0.5, 0.5, 'No bottleneck data', ha='center', va='center')
+        axes[0].set_axis_off()
+
+    priorities = summary.get('priority_recommendations', [])[:5]
+    if priorities:
+        labels = [x['activity'] for x in priorities]
+        values = [x['priority_score'] for x in priorities]
+        axes[1].barh(labels, values, color='#4C72B0')
+        axes[1].invert_yaxis()
+        axes[1].set_title('Priority Recommendations')
+        axes[1].set_xlabel('Priority Score')
+    else:
+        axes[1].text(0.5, 0.5, 'No recommendation data', ha='center', va='center')
+        axes[1].set_axis_off()
+
+    finalize_and_save(fig, output_dir / 'executive_dashboard.png')
 
 
 def generate_result_insights(output_dir: str | Path) -> dict:
@@ -85,7 +122,6 @@ def generate_result_insights(output_dir: str | Path) -> dict:
                 'relative_increase_pct': (delta / float(baseline.iloc[0]) * 100.0) if float(baseline.iloc[0]) else None,
             }
 
-    # Priority recommendation score = normalized wait + normalized rework
     priority_rows = []
     if not bottleneck.empty and not internal.empty and {'activity', 'mean'}.issubset(bottleneck.columns) and {'activity', 'rework_ratio'}.issubset(internal.columns):
         merged = bottleneck[['activity', 'mean']].merge(
@@ -144,5 +180,6 @@ def generate_result_insights(output_dir: str | Path) -> dict:
     md_path = output_dir / 'executive_summary.md'
     md_path.write_text('\n'.join(md_lines) + '\n', encoding='utf-8')
 
+    _save_executive_dashboard(summary, output_dir)
     print(f"Executive summary written to {json_path} and {md_path}")
     return summary

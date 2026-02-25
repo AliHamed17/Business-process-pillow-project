@@ -40,6 +40,7 @@ class TestResultInsights(unittest.TestCase):
             self.assertEqual(summary['kpis']['cases_analyzed'], 2)
             self.assertTrue((out / 'executive_summary.json').exists())
             self.assertTrue((out / 'executive_summary.md').exists())
+            self.assertTrue((out / 'executive_dashboard.png').exists())
 
             payload = json.loads((out / 'executive_summary.json').read_text(encoding='utf-8'))
             self.assertTrue(len(payload['priority_recommendations']) >= 1)

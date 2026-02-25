@@ -6,8 +6,10 @@ import pandas as pd
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+    from plot_utils import finalize_and_save, set_plot_style
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
+    from .plot_utils import finalize_and_save, set_plot_style
 
 
 REQUIRED_COLUMNS = ['case_id', 'department', 'timestamp', 'activity']
@@ -17,18 +19,32 @@ def _save_workload_plots(wl_df: pd.DataFrame, output_dir: Path) -> None:
     if wl_df.empty:
         return
 
+    set_plot_style()
     fig, ax = plt.subplots(figsize=(10, 5))
     for dept, group in wl_df.groupby('Department'):
-        ax.plot(group['Week'], group['Open_Cases'], label=str(dept), alpha=0.45)
+        ax.plot(group['Week'], group['Open_Cases'], label=str(dept), alpha=0.35)
         ax.plot(group['Week'], group['Moving_Avg_4W'], linewidth=2)
     ax.set_title('Open Cases by Department (Weekly + 4W MA)')
     ax.set_xlabel('Week')
     ax.set_ylabel('Open Cases')
     if wl_df['Department'].nunique() <= 12:
         ax.legend(loc='best', fontsize=8)
-    fig.tight_layout()
-    fig.savefig(output_dir / 'workload_trend_by_department.png', dpi=150)
-    plt.close(fig)
+    finalize_and_save(fig, output_dir / 'workload_trend_by_department.png')
+
+    # Department-week heatmap
+    pivot = wl_df.pivot_table(index='Department', columns='Week', values='Open_Cases', aggfunc='mean').fillna(0)
+    if not pivot.empty:
+        fig, ax = plt.subplots(figsize=(11, max(4, len(pivot) * 0.4)))
+        im = ax.imshow(pivot.values, aspect='auto', cmap='YlOrRd')
+        ax.set_title('Department Workload Heatmap')
+        ax.set_xlabel('Week Index')
+        ax.set_ylabel('Department')
+        ax.set_yticks(range(len(pivot.index)))
+        ax.set_yticklabels([str(x) for x in pivot.index], fontsize=8)
+        ax.set_xticks(range(len(pivot.columns)))
+        ax.set_xticklabels([d.strftime('%Y-%m-%d') for d in pivot.columns], rotation=45, ha='right', fontsize=7)
+        fig.colorbar(im, ax=ax, label='Avg Open Cases')
+        finalize_and_save(fig, output_dir / 'workload_heatmap_department_week.png')
 
 
 def analyze_workload(logfile_path, output_dir):
