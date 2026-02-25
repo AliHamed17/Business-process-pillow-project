@@ -39,3 +39,21 @@ This repository contains the full source code and analysis for the business proc
 ## Development checks
 - Run static import/bytecode check: `python -m compileall src`
 - Run unit tests: `python -m unittest discover -s tests -p "test_*.py"`
+
+
+### Visualization outputs
+- `outputs/activity_frequency_top15.png`: most frequent activities in the event log.
+- `outputs/variant_frequency_top15.png`: top process variant frequencies.
+- `outputs/case_cycle_time_distribution.png`: case cycle time distribution.
+- `outputs/bottleneck_top10_mean_wait.png`: top bottleneck activities by mean wait time.
+- `outputs/workload_trend_by_department.png`: department open-case trend with moving average.
+- `outputs/responsible_change_cycle_time_comparison.png` and `outputs/responsible_change_cycle_time_boxplot.png`: impact of reassignments on cycle time.
+- `outputs/internal_rework_ratio_top10.png`: activities with highest rework ratio.
+
+### How to review and analyze the plots
+1. Start with `activity_frequency_top15.png` and `variant_frequency_top15.png` to understand dominant flow patterns.
+2. Use `case_cycle_time_distribution.png` to spot long-tail cases and overall spread.
+3. Check `bottleneck_top10_mean_wait.png` to identify stages likely causing delays.
+4. Compare departments in `workload_trend_by_department.png` to detect load spikes and imbalance.
+5. Validate whether reassignments are associated with slower outcomes using responsible-change plots.
+6. Use `internal_rework_ratio_top10.png` to prioritize stages for SOP refinement and automation.

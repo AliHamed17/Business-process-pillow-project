@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 try:
@@ -12,7 +13,26 @@ except ModuleNotFoundError:  # package-import fallback for tests
 REQUIRED_COLUMNS = ['case_id', 'department', 'timestamp', 'activity']
 
 
+def _save_workload_plots(wl_df: pd.DataFrame, output_dir: Path) -> None:
+    if wl_df.empty:
+        return
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for dept, group in wl_df.groupby('Department'):
+        ax.plot(group['Week'], group['Open_Cases'], label=str(dept), alpha=0.45)
+        ax.plot(group['Week'], group['Moving_Avg_4W'], linewidth=2)
+    ax.set_title('Open Cases by Department (Weekly + 4W MA)')
+    ax.set_xlabel('Week')
+    ax.set_ylabel('Open Cases')
+    if wl_df['Department'].nunique() <= 12:
+        ax.legend(loc='best', fontsize=8)
+    fig.tight_layout()
+    fig.savefig(output_dir / 'workload_trend_by_department.png', dpi=150)
+    plt.close(fig)
+
+
 def analyze_workload(logfile_path, output_dir):
+    output_dir = Path(output_dir)
     df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='workload analysis')
 
     cases = df.groupby(['case_id', 'department']).agg(
@@ -42,7 +62,8 @@ def analyze_workload(logfile_path, output_dir):
             lambda x: x.rolling(4, min_periods=1).mean()
         )
 
-    wl_df.to_csv(Path(output_dir) / 'workload_analysis.csv', index=False)
+    wl_df.to_csv(output_dir / 'workload_analysis.csv', index=False)
+    _save_workload_plots(wl_df, output_dir)
     print("Workload analysis complete.")
 
 

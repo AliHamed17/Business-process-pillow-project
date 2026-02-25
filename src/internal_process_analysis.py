@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 except ModuleNotFoundError:  # package-import fallback for tests
@@ -10,7 +12,24 @@ except ModuleNotFoundError:  # package-import fallback for tests
 REQUIRED_COLUMNS = ['case_id', 'activity', 'event_type', 'timestamp']
 
 
+def _save_internal_process_plots(stage_complexity, output_dir: Path) -> None:
+    top_rework = stage_complexity.sort_values('rework_ratio', ascending=False).head(10)
+    if top_rework.empty:
+        return
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+    ax.barh(top_rework['activity'].astype(str), top_rework['rework_ratio'])
+    ax.invert_yaxis()
+    ax.set_title('Top 10 Activities by Rework Ratio')
+    ax.set_xlabel('Rework Ratio')
+    ax.set_ylabel('Activity')
+    fig.tight_layout()
+    fig.savefig(output_dir / 'internal_rework_ratio_top10.png', dpi=150)
+    plt.close(fig)
+
+
 def analyze_internal_process(logfile_path, output_dir):
+    output_dir = Path(output_dir)
     df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='internal process analysis')
     df.sort_values(['case_id', 'timestamp'], inplace=True)
 
@@ -37,7 +56,8 @@ def analyze_internal_process(logfile_path, output_dir):
     )
     stage_complexity.sort_values(by='avg_events_per_case', ascending=False, inplace=True)
 
-    stage_complexity.to_csv(Path(output_dir) / 'internal_process_analysis.csv', index=False)
+    stage_complexity.to_csv(output_dir / 'internal_process_analysis.csv', index=False)
+    _save_internal_process_plots(stage_complexity, output_dir)
     print("Internal process analysis complete.")
 
 

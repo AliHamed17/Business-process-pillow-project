@@ -18,6 +18,7 @@ class TestPipelineHelpers(unittest.TestCase):
             self.assertEqual(payload['top_variants'], 15)
             self.assertIn('artifacts', payload)
             self.assertTrue(any(item['file'] == 'cleaned_log.csv' for item in payload['artifacts']))
+            self.assertTrue(any(item['file'] == 'activity_frequency_top15.png' for item in payload['artifacts']))
 
 
 if __name__ == '__main__':

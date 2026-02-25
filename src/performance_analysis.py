@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 except ModuleNotFoundError:  # package-import fallback for tests
@@ -10,7 +12,32 @@ except ModuleNotFoundError:  # package-import fallback for tests
 REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
 
 
+def _save_performance_plots(case_perf, stage_wait, output_dir: Path) -> None:
+    if not case_perf.empty:
+        fig, ax = plt.subplots(figsize=(8, 4.5))
+        case_perf['cycle_time_days'].dropna().plot(kind='hist', bins=20, ax=ax)
+        ax.set_title('Case Cycle Time Distribution (Days)')
+        ax.set_xlabel('Cycle Time (Days)')
+        ax.set_ylabel('Case Count')
+        fig.tight_layout()
+        fig.savefig(output_dir / 'case_cycle_time_distribution.png', dpi=150)
+        plt.close(fig)
+
+    top_wait = stage_wait.dropna(subset=['mean']).head(10)
+    if not top_wait.empty:
+        fig, ax = plt.subplots(figsize=(9, 5))
+        ax.barh(top_wait['activity'].astype(str), top_wait['mean'])
+        ax.invert_yaxis()
+        ax.set_title('Top Activities by Average Wait Time')
+        ax.set_xlabel('Average Wait Time (Days)')
+        ax.set_ylabel('Activity')
+        fig.tight_layout()
+        fig.savefig(output_dir / 'bottleneck_top10_mean_wait.png', dpi=150)
+        plt.close(fig)
+
+
 def analyze_performance(logfile_path, output_dir):
+    output_dir = Path(output_dir)
     df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='performance analysis')
     df.sort_values(['case_id', 'timestamp'], inplace=True)
 
@@ -32,8 +59,9 @@ def analyze_performance(logfile_path, output_dir):
     stage_wait = df.groupby('activity')['wait_time_days'].agg(['mean', 'median', 'std', 'max']).reset_index()
     stage_wait.sort_values(by='mean', ascending=False, inplace=True)
 
-    case_perf.to_csv(Path(output_dir) / 'case_performance.csv', index=False)
-    stage_wait.to_csv(Path(output_dir) / 'bottleneck_analysis.csv', index=False)
+    case_perf.to_csv(output_dir / 'case_performance.csv', index=False)
+    stage_wait.to_csv(output_dir / 'bottleneck_analysis.csv', index=False)
+    _save_performance_plots(case_perf, stage_wait, output_dir)
 
     print("Performance analysis complete.")
 

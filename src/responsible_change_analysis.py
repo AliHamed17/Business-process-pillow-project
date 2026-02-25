@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
 except ModuleNotFoundError:  # package-import fallback for tests
@@ -10,7 +12,34 @@ except ModuleNotFoundError:  # package-import fallback for tests
 REQUIRED_COLUMNS = ['case_id', 'timestamp', 'stage_responsible', 'changed_field', 'activity']
 
 
+def _save_responsible_change_plots(case_changes, comparison, output_dir: Path) -> None:
+    if not comparison.empty:
+        fig, ax = plt.subplots(figsize=(6.5, 4.5))
+        labels = comparison['has_reassignment'].map({False: 'No Reassignment', True: 'Has Reassignment'})
+        ax.bar(labels, comparison['mean'])
+        ax.set_title('Average Cycle Time by Reassignment')
+        ax.set_ylabel('Average Cycle Time (Days)')
+        fig.tight_layout()
+        fig.savefig(output_dir / 'responsible_change_cycle_time_comparison.png', dpi=150)
+        plt.close(fig)
+
+    if not case_changes.empty:
+        fig, ax = plt.subplots(figsize=(6.5, 4.5))
+        box_data = [
+            case_changes.loc[~case_changes['has_reassignment'], 'cycle_time_days'].dropna(),
+            case_changes.loc[case_changes['has_reassignment'], 'cycle_time_days'].dropna(),
+        ]
+        if any(len(x) > 0 for x in box_data):
+            ax.boxplot(box_data, labels=['No Reassignment', 'Has Reassignment'])
+            ax.set_title('Cycle Time Distribution by Reassignment')
+            ax.set_ylabel('Cycle Time (Days)')
+            fig.tight_layout()
+            fig.savefig(output_dir / 'responsible_change_cycle_time_boxplot.png', dpi=150)
+        plt.close(fig)
+
+
 def analyze_responsible_change(logfile_path, output_dir):
+    output_dir = Path(output_dir)
     df = load_clean_log(logfile_path, REQUIRED_COLUMNS, context='responsible change analysis')
     df.sort_values(['case_id', 'timestamp'], inplace=True)
 
@@ -40,7 +69,8 @@ def analyze_responsible_change(logfile_path, output_dir):
         ['count', 'mean', 'median', 'std']
     ).reset_index()
 
-    comparison.to_csv(Path(output_dir) / 'responsible_change_analysis.csv', index=False)
+    comparison.to_csv(output_dir / 'responsible_change_analysis.csv', index=False)
+    _save_responsible_change_plots(case_changes, comparison, output_dir)
     print("Responsible change analysis complete.")
 
 

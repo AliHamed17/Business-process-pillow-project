@@ -52,6 +52,14 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'workload_analysis.csv',
         'responsible_change_analysis.csv',
         'internal_process_analysis.csv',
+        'activity_frequency_top15.png',
+        'variant_frequency_top15.png',
+        'case_cycle_time_distribution.png',
+        'bottleneck_top10_mean_wait.png',
+        'workload_trend_by_department.png',
+        'responsible_change_cycle_time_comparison.png',
+        'responsible_change_cycle_time_boxplot.png',
+        'internal_rework_ratio_top10.png',
     ]
 
     manifest = {
