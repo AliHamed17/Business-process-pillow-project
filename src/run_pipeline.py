@@ -12,6 +12,7 @@ try:
     from performance_analysis import analyze_performance
     from process_discovery import generate_process_models
     from responsible_change_analysis import analyze_responsible_change
+    from result_insights import generate_result_insights
     from workload_analysis import analyze_workload
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir
@@ -20,6 +21,7 @@ except ModuleNotFoundError:  # package-import fallback for tests
     from .performance_analysis import analyze_performance
     from .process_discovery import generate_process_models
     from .responsible_change_analysis import analyze_responsible_change
+    from .result_insights import generate_result_insights
     from .workload_analysis import analyze_workload
 
 
@@ -60,6 +62,8 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'responsible_change_cycle_time_comparison.png',
         'responsible_change_cycle_time_boxplot.png',
         'internal_rework_ratio_top10.png',
+        'executive_summary.json',
+        'executive_summary.md',
     ]
 
     manifest = {
@@ -89,25 +93,28 @@ def main():
     file2 = ensure_exists(args.file2, "Excel file 2")
     output_dir = ensure_output_dir(args.output_dir)
 
-    print("Step 1/6: Data preprocessing")
+    print("Step 1/7: Data preprocessing")
     preprocess_logs(file1, file2, output_dir)
 
     cleaned_log = output_dir / "cleaned_log.csv"
 
-    print("Step 2/6: Process discovery")
+    print("Step 2/7: Process discovery")
     generate_process_models(cleaned_log, output_dir, top_variants=args.top_variants)
 
-    print("Step 3/6: Performance analysis")
+    print("Step 3/7: Performance analysis")
     analyze_performance(cleaned_log, output_dir)
 
-    print("Step 4/6: Workload analysis")
+    print("Step 4/7: Workload analysis")
     analyze_workload(cleaned_log, output_dir)
 
-    print("Step 5/6: Responsible change analysis")
+    print("Step 5/7: Responsible change analysis")
     analyze_responsible_change(cleaned_log, output_dir)
 
-    print("Step 6/6: Internal process analysis")
+    print("Step 6/7: Internal process analysis")
     analyze_internal_process(cleaned_log, output_dir)
+
+    print("Step 7/7: Executive summary")
+    generate_result_insights(output_dir)
 
     _write_pipeline_manifest(output_dir, top_variants=args.top_variants)
     print(f"Pipeline completed successfully. Outputs available in: {output_dir}")

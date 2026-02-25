@@ -49,6 +49,7 @@ This repository contains the full source code and analysis for the business proc
 - `outputs/workload_trend_by_department.png`: department open-case trend with moving average.
 - `outputs/responsible_change_cycle_time_comparison.png` and `outputs/responsible_change_cycle_time_boxplot.png`: impact of reassignments on cycle time.
 - `outputs/internal_rework_ratio_top10.png`: activities with highest rework ratio.
+- `outputs/executive_summary.json` and `outputs/executive_summary.md`: auto-generated KPI summary and prioritized improvement recommendations.
 
 ### How to review and analyze the plots
 1. Start with `activity_frequency_top15.png` and `variant_frequency_top15.png` to understand dominant flow patterns.
@@ -57,3 +58,4 @@ This repository contains the full source code and analysis for the business proc
 4. Compare departments in `workload_trend_by_department.png` to detect load spikes and imbalance.
 5. Validate whether reassignments are associated with slower outcomes using responsible-change plots.
 6. Use `internal_rework_ratio_top10.png` to prioritize stages for SOP refinement and automation.
+7. Read `executive_summary.md` for a concise KPI snapshot and ranked improvement list.
