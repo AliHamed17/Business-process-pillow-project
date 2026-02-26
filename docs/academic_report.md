@@ -151,18 +151,52 @@ Analysing the first 5 **distinct** stages per case to build sequence paths:
 **Key insight:** All five slowest paths include the post-CEO tender publication and committee stages. The bottleneck is not in the approval chain — it is in the **tender-to-committee corridor** that follows CEO approval. Paths reaching the full external tender track average 270–317 days vs. the overall mean of 18.5 days (which is dominated by short cases that never reach this stage).
 
 ## 5. Performance Analysis
+
+### 5.1 Cycle Time Distribution
 - **Average Cycle Time:** 18.5 days.
 - **Median Cycle Time (P50):** 1.2 days.
 - **P90 Cycle Time:** 46.8 days — 90% of cases resolve within 47 days.
 - **P95 Cycle Time:** 116.6 days — the upper 5% of cases take nearly 4 months.
 - **P99 Cycle Time:** 259.3 days — extreme outlier tail reaching up to 365 days.
-- **Top Bottlenecks (by maximum observed wait):**
-  - **CEO Decision (החלטת מנכ"ל - גיוס):** Max 134 days, P95=1.0 day (right-skewed: rare but severe delays).
-  - **Budget Recommendation (המלצת תקציב לגיוס):** Max 121 days, P95=1.0 day.
-  - **Staffing Recommendation (המלצת איוש ואופן גיוס):** Max 106 days.
-  - **HR Manpower Planning (תכנון - בקרת כ"א):** Max 61 days.
-  - **Internal Tender Publication (מכרז פנימי לפרסום):** Max 73 days.
-- **Interpretation:** The very low P50 (1.2 days) combined with a P95 of 116.6 days indicates a heavily right-skewed distribution: the majority of cases are processed quickly, but a small number of cases — likely those requiring CEO/Mayor sign-off or hitting budgeting delays — drag the mean up dramatically. SLA enforcement at these specific stages would bring the P95 below 30 days.
+
+### 5.2 Bottlenecks by Stage
+*(Source: `outputs/bottleneck_analysis.csv`)*
+- **CEO Decision (החלטת מנכ"ל - גיוס):** Max 134 days, P95=1.0 day (right-skewed: rare but severe delays).
+- **Budget Recommendation (המלצת תקציב לגיוס):** Max 121 days, P95=1.0 day.
+- **Staffing Recommendation (המלצת איוש ואופן גיוס):** Max 106 days.
+- **HR Manpower Planning (תכנון - בקרת כ"א):** Max 61 days.
+- **Internal Tender Publication (מכרז פנימי לפרסום):** Max 73 days.
+
+### 5.3 Bottlenecks by Role Type
+*(Source: `outputs/role_bottleneck_analysis.csv`)*
+The `stage_responsible` field identifies the role accountable for each stage. Top bottleneck roles by average wait time:
+- **סגל ראש העיר** (Mayor's Staff): Longest average stage duration, responsible for the Mayor's Office Decision stage.
+- **מנהל אגף משאבי אנוש** (HR Division Head): Second-highest wait, responsible for budget and staffing recommendations.
+- **גזברות** (Treasury): Financial approval stages show high variance — fast for routine cases but extreme outliers for complex budget decisions.
+
+### 5.4 Bottlenecks by Specific Users
+*(Source: `outputs/user_bottleneck_analysis.csv`)*
+The `performer` field (numeric user codes) was analysed to find individual-level delays. Top findings:
+- A small group of 5–7 users (primarily in the Mayor's Office and Budget Department) are responsible for the majority of P95+ delays.
+- These users handle a disproportionate share of complex cases requiring executive sign-off.
+- **Recommendation:** Cross-training or delegation authority for these key users would reduce single-point-of-failure risk.
+
+### 5.5 Bottlenecks by Requesting Department
+*(Source: `outputs/dept_cancellation_rate.csv`, `outputs/plots/advanced/dept_cycle_time_violin.png`)*
+Departmental cycle time variance was analysed using violin plots:
+- **High-variance departments** (wide violin shapes) indicate inconsistent processing — some cases fly through while others stall for months.
+- **Low-variance departments** have standardised intake procedures that could serve as best-practice templates.
+- Departments with the highest cancellation rates tend to submit incomplete requests, triggering early-stage abandonment.
+
+### 5.6 Bottlenecks by Process Outcome
+*(Source: `outputs/special_alignment_results.json`)*
+- **Approved cases (אושר):** Average 146.6 days — these go through the full approval + tender + committee pipeline.
+- **Cancelled cases (בוטל):** Average 101.1 days — shorter because they are abandoned before reaching the later stages.
+- **Rejected cases (לא אושר):** Average 119.8 days.
+- **Key Insight:** Approved cases take *longer* than cancelled ones, confirming that the delay is in the post-CEO implementation stages (tender publication, committee scheduling), not in the initial approval chain.
+
+### 5.7 Interpretation
+The very low P50 (1.2 days) combined with a P95 of 116.6 days indicates a heavily right-skewed distribution: the majority of cases are processed quickly, but a small number of cases — likely those requiring CEO/Mayor sign-off or hitting budgeting delays — drag the mean up dramatically. SLA enforcement at these specific stages would bring the P95 below 30 days.
 
 ## 6. Workload Analysis
 
@@ -181,8 +215,22 @@ A statistical comparison was performed between cases involving responsible party
 **Conclusion:** Reassignment appears to be a proactive measure that prevents case stagnation. Cases that remain "stuck" with a single person without progress are the primary contributors to the 80-day average.
 
 ## 8. Internal Process Analysis
+
+### 8.1 Stage-Level Complexity
+*(Source: `outputs/internal_process_analysis.csv`)*
 We identified "Internal Complexity" as the number of events per stage per case.
 - **High Complexity Stages:** Tender Committee Decisions and Committee Date Setting show over 150 events per case. This suggests that the "stage" reflects a long negotiation or administrative process involving many small updates rather than a single decision point.
+
+### 8.2 Sub-Process Identification via Changed Field Analysis
+*(Source: `outputs/sub_process_reasons.csv`)*
+The `Changed Field` column was analysed to identify what specifically triggers internal rework loops within stages. The top rework trigger across all stages is the field **'רמת חריגה מזמן תקן'** (Standard Time Deviation Level) — this field is updated repeatedly when a stage exceeds its target duration, reflecting internal escalation sub-processes. Other frequently changed fields include salary parameters and budget codes, indicating that financial data re-entry is a significant source of internal complexity.
+
+### 8.3 Parallel Track Compliance Audit
+*(Source: `outputs/special_alignment_results.json`)*
+The process description specifies that three tracks should run **in parallel** after the approval hierarchy: (1) Budget/Treasurer approval, (2) Service Conditions salary check, and (3) Payroll salary simulation. We measured the actual overlap between the Approval track and the Salary track:
+- **Concurrency Rate:** **84.97%** — meaning 85% of cases correctly execute these tracks in parallel.
+- **Sequential Violations:** 15% of cases wait for approvals to finish before starting salary checks, adding unnecessary sequential delay.
+- **Recommendation:** Enforce system-level parallelism by auto-triggering the salary simulation when Budget Recommendation is initiated, rather than relying on manual handoff.
 
 ## 9. Phase 2 Analysis
 
