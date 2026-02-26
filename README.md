@@ -59,6 +59,7 @@ This repository contains the full source code and analysis for the business proc
 - `outputs/alignment_report.json` and `outputs/alignment_report.md`: explicit business-question coverage checklist and overall alignment score.
 - `outputs/final_project_report.md`: structured final-project report scaffold (Executive Summary, Introduction, Preprocessing, Process Pathing, Analyses, Conclusions, Appendices).
 - `outputs/legal_interval_analysis.csv`, `outputs/junior_position_path_analysis.csv`, `outputs/station_mapping_coverage.csv`: process-specific checks (legal-window proxy, junior path proxy, and station narrative mapping).
+- `outputs/results_debug_report.json` and `outputs/results_debug_report.md`: automated sanity diagnostics over generated results (missing artifacts, invalid values, and alignment score presence).
 
 ### How to review and analyze the plots
 1. Start with `activity_frequency_top15.png` and `variant_frequency_top15.png` to understand dominant flow patterns.

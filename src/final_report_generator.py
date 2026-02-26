@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import json
 import pandas as pd
 
 
@@ -12,6 +13,17 @@ def _read_csv(path: Path) -> pd.DataFrame:
         return pd.read_csv(path)
     except Exception:
         return pd.DataFrame()
+
+
+
+
+def _read_json(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        return {}
 
 
 def _top_rows(df: pd.DataFrame, cols: list[str], n: int = 5) -> list[str]:
@@ -28,7 +40,7 @@ def generate_final_project_report(output_dir: str | Path) -> Path:
     """Generate a structured final-project markdown report aligned to the brief sections."""
     output_dir = Path(output_dir)
 
-    quality = _read_csv(output_dir / 'preprocessing_quality_report.json')  # intentionally may fail -> handled below
+    quality = _read_json(output_dir / 'preprocessing_quality_report.json')
     variants = _read_csv(output_dir / 'variants.csv')
     bottleneck_stage = _read_csv(output_dir / 'bottleneck_by_stage.csv')
     dept_cycle = _read_csv(output_dir / 'cycle_time_by_department.csv')
@@ -59,6 +71,8 @@ def generate_final_project_report(output_dir: str | Path) -> Path:
     lines.append('## Preprocessing')
     lines.append('Purpose: standardize log schema, parse dates, remove invalid records, and produce analysis-ready event traces.')
     lines.append('Artifacts: `cleaned_log.csv`, `event_log.xes`, `preprocessing_quality_report.json`, and preprocessing plots in outputs.')
+    if quality:
+        lines.append(f"Quality snapshot: rows_after_cleaning={quality.get('rows_after_cleaning')}, dropped_missing={quality.get('dropped_missing_core_fields')}, dropped_duplicates={quality.get('dropped_duplicates')}")
     lines.append('Suggested evidence charts: `activity_frequency_top15.png`, `case_cycle_time_distribution.png`.')
 
     lines.append('')

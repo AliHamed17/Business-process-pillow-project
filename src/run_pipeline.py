@@ -15,6 +15,7 @@ try:
     from process_discovery import generate_process_models
     from responsible_change_analysis import analyze_responsible_change
     from result_insights import generate_result_insights
+    from result_debugger import debug_results
     from final_report_generator import generate_final_project_report
     from alignment_report import generate_alignment_report
     from workload_analysis import analyze_workload
@@ -28,6 +29,7 @@ except ModuleNotFoundError:  # package-import fallback for tests
     from .process_discovery import generate_process_models
     from .responsible_change_analysis import analyze_responsible_change
     from .result_insights import generate_result_insights
+    from .result_debugger import debug_results
     from .final_report_generator import generate_final_project_report
     from .alignment_report import generate_alignment_report
     from .workload_analysis import analyze_workload
@@ -94,6 +96,8 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'legal_interval_analysis.csv',
         'junior_position_path_analysis.csv',
         'station_mapping_coverage.csv',
+        'results_debug_report.json',
+        'results_debug_report.md',
     ]
 
 
@@ -125,40 +129,43 @@ def main():
     file2 = ensure_exists(args.file2, "Excel file 2")
     output_dir = ensure_output_dir(args.output_dir)
 
-    print("Step 1/11: Data preprocessing")
+    print("Step 1/12: Data preprocessing")
     preprocess_logs(file1, file2, output_dir)
 
     cleaned_log = output_dir / "cleaned_log.csv"
 
-    print("Step 2/11: Process discovery")
+    print("Step 2/12: Process discovery")
     generate_process_models(cleaned_log, output_dir, top_variants=args.top_variants)
 
-    print("Step 3/11: Performance analysis")
+    print("Step 3/12: Performance analysis")
     analyze_performance(cleaned_log, output_dir)
 
-    print("Step 4/11: Workload analysis")
+    print("Step 4/12: Workload analysis")
     analyze_workload(cleaned_log, output_dir)
 
-    print("Step 5/11: Responsible change analysis")
+    print("Step 5/12: Responsible change analysis")
     analyze_responsible_change(cleaned_log, output_dir)
 
-    print("Step 6/11: Internal process analysis")
+    print("Step 6/12: Internal process analysis")
     analyze_internal_process(cleaned_log, output_dir)
 
-    print("Step 7/11: Bottleneck segmentation analysis")
+    print("Step 7/12: Bottleneck segmentation analysis")
     analyze_bottleneck_segmentation(cleaned_log, output_dir)
 
-    print("Step 8/11: Executive summary")
+    print("Step 8/12: Executive summary")
     generate_result_insights(output_dir)
 
-    print("Step 9/11: Policy and path-specific analysis")
+    print("Step 9/12: Policy and path-specific analysis")
     analyze_policy_and_path_alignment(cleaned_log, output_dir)
 
-    print("Step 10/11: Final structured report generation")
+    print("Step 10/12: Final structured report generation")
     generate_final_project_report(output_dir)
 
-    print("Step 11/11: Alignment checklist report")
+    print("Step 11/12: Alignment checklist report")
     generate_alignment_report(output_dir)
+
+    print("Step 12/12: Results debug sanity checks")
+    debug_results(output_dir)
 
     _write_pipeline_manifest(output_dir, top_variants=args.top_variants)
     print(f"Pipeline completed successfully. Outputs available in: {output_dir}")
