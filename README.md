@@ -21,6 +21,8 @@ This repository contains the full source code and analysis for the business proc
 - `python src/workload_analysis.py outputs/cleaned_log.csv --output-dir outputs`
 - `python src/responsible_change_analysis.py outputs/cleaned_log.csv --output-dir outputs`
 - `python src/internal_process_analysis.py outputs/cleaned_log.csv --output-dir outputs`
+- `python src/bottleneck_segmentation_analysis.py outputs/cleaned_log.csv --output-dir outputs`
+- `python src/policy_path_analysis.py outputs/cleaned_log.csv --output-dir outputs`
 
 ## Features
 - End-to-end Process Mining using `pandas` and `pm4py`.
@@ -55,6 +57,8 @@ This repository contains the full source code and analysis for the business proc
 - `outputs/internal_rework_ratio_top10.png` and `outputs/internal_rework_duration_scatter.png`: rework hotspots and duration relationship.
 - `outputs/executive_summary.json`, `outputs/executive_summary.md`, and `outputs/executive_dashboard.png`: KPI summary, prioritized recommendations, and executive visual dashboard.
 - `outputs/alignment_report.json` and `outputs/alignment_report.md`: explicit business-question coverage checklist and overall alignment score.
+- `outputs/final_project_report.md`: structured final-project report scaffold (Executive Summary, Introduction, Preprocessing, Process Pathing, Analyses, Conclusions, Appendices).
+- `outputs/legal_interval_analysis.csv`, `outputs/junior_position_path_analysis.csv`, `outputs/station_mapping_coverage.csv`: process-specific checks (legal-window proxy, junior path proxy, and station narrative mapping).
 
 ### How to review and analyze the plots
 1. Start with `activity_frequency_top15.png` and `variant_frequency_top15.png` to understand dominant flow patterns.

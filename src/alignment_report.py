@@ -17,7 +17,11 @@ def generate_alignment_report(output_dir: str | Path) -> dict:
         'ownership_change_impact': (output_dir / 'responsible_change_analysis.csv').exists(),
         'internal_subprocess_impact': (output_dir / 'internal_process_analysis.csv').exists(),
         'committee_screening_hotspots': (output_dir / 'keyword_bottleneck_analysis.csv').exists(),
+        'legal_constraint_window_analysis': (output_dir / 'legal_interval_analysis.csv').exists(),
+        'junior_position_special_path_analysis': (output_dir / 'junior_position_path_analysis.csv').exists(),
+        'station_mapping_to_process_narrative': (output_dir / 'station_mapping_coverage.csv').exists(),
         'operational_proposals_artifact': (output_dir / 'executive_summary.md').exists(),
+        'structured_final_report': (output_dir / 'final_project_report.md').exists(),
     }
 
     score = int(sum(checks.values()))

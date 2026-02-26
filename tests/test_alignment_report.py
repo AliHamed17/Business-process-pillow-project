@@ -10,7 +10,6 @@ class TestAlignmentReport(unittest.TestCase):
     def test_alignment_report_generation(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            # create a subset of expected artifacts
             for name in [
                 'bottleneck_by_stage.csv',
                 'bottleneck_by_stage_owner.csv',
@@ -23,7 +22,11 @@ class TestAlignmentReport(unittest.TestCase):
                 'responsible_change_analysis.csv',
                 'internal_process_analysis.csv',
                 'keyword_bottleneck_analysis.csv',
+                'legal_interval_analysis.csv',
+                'junior_position_path_analysis.csv',
+                'station_mapping_coverage.csv',
                 'executive_summary.md',
+                'final_project_report.md',
             ]:
                 (out / name).write_text('x', encoding='utf-8')
 
