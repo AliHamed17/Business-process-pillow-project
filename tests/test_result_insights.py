@@ -44,6 +44,13 @@ class TestResultInsights(unittest.TestCase):
 
             payload = json.loads((out / 'executive_summary.json').read_text(encoding='utf-8'))
             self.assertTrue(len(payload['priority_recommendations']) >= 1)
+            self.assertIn('risk_signals', payload)
+            self.assertIn('result_quality', payload)
+            self.assertGreater(payload['result_quality']['completeness_ratio'], 0)
+
+            md = (out / 'executive_summary.md').read_text(encoding='utf-8')
+            self.assertIn('## Key Messages', md)
+            self.assertIn('## Result Quality', md)
 
 
 if __name__ == '__main__':
