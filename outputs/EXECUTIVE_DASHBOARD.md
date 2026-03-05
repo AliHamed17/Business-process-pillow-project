@@ -20,7 +20,9 @@ The recruitment process at Haifa Municipality shows a high degree of complexity 
 - **Correlation:** **0.0%** — Evidence shows delays are structural (stage-based), not volumetric.
 
 ### 4. Ownership Changes
-- **Cycle Time Impact:** Stabilizing ownership could shave **35%** off cycle times for complex cases.
+- **Finding:** Cases *with* ownership transitions have **shorter** average cycle times than those without, suggesting that longer cases stall with a single owner rather than benefiting from handovers.
+- **Controlled Analysis:** After controlling for case complexity (event count), reassigned cases still show reduced cycle times within each complexity quartile.
+- **Recommendation:** Focus on stages where a single owner holds a case for >14 days without progression, rather than minimizing handovers globally.
 
 ### 5. Internal Sub-Processes
 - **Rework Trigger:** Field **'רמת חריגה מזמן תקן'** is the primary driver of internal loops.

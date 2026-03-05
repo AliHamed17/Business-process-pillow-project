@@ -1,0 +1,11 @@
+{
+  "rows_after_merge": 1126436,
+  "rows_after_cleaning": 22299,
+  "dropped_missing_core_fields": 0,
+  "dropped_duplicates": 85991,
+  "dropped_consecutive_duplicates": 1018146,
+  "unique_cases": 11922,
+  "unique_activities": 42,
+  "timestamp_min": "2024-01-01T03:00:00",
+  "timestamp_max": "2024-12-31T14:18:04"
+}

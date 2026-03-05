@@ -1,0 +1,156 @@
+{
+  "kpis": {
+    "cases_analyzed": 11922,
+    "avg_cycle_time_days": 6.85937978515443,
+    "median_cycle_time_days": 0.0,
+    "p90_cycle_time_days": 0.0
+  },
+  "top_bottlenecks": [
+    {
+      "activity": "חוזה נחתם ע\"י כל הגורמים",
+      "mean_wait_days": 36.59997608024692
+    },
+    {
+      "activity": "החלטת ועדת מכרזים - התאמת מועמדים (מכרז פנימי) - מלבד רמ\"ד",
+      "mean_wait_days": 33.492384118112014
+    },
+    {
+      "activity": "אישור קביעת מועד ועדה עבור הליך גיוס - מכרז",
+      "mean_wait_days": 32.67451955685109
+    },
+    {
+      "activity": "החלטת ועדת מכרזים (מכרז חיצוני + פנימי)",
+      "mean_wait_days": 31.555418788580248
+    },
+    {
+      "activity": "החלטת הועדה - התאמת מועמדים - ללא מכרז",
+      "mean_wait_days": 21.227091104497354
+    }
+  ],
+  "top_rework_activities": [
+    {
+      "activity": "מכרז פנימי לפרסום",
+      "rework_ratio": 0.1297208538587849
+    },
+    {
+      "activity": "אישור יידוע נוסח המכרז נציג ועד העובדים",
+      "rework_ratio": 0.1234375
+    },
+    {
+      "activity": "אישור סיום נוסח מכרז",
+      "rework_ratio": 0.1197691197691197
+    },
+    {
+      "activity": "אישור נוסח מכרז ע\"י מנהל היחידה המבקשת (אגף)",
+      "rework_ratio": 0.1176470588235294
+    },
+    {
+      "activity": "אישור נוסח מכרז ע\"י מנהל היחידה המבקשת (מינהל)",
+      "rework_ratio": 0.1134020618556701
+    }
+  ],
+  "variant_snapshot": [
+    {
+      "variant": "('תכנון - בקרת כ\"א',)",
+      "frequency": 665
+    },
+    {
+      "variant": "('החלטת מנכ\"ל - גיוס',)",
+      "frequency": 653
+    },
+    {
+      "variant": "('המלצת גיוס של אגף משאבי אנוש',)",
+      "frequency": 648
+    },
+    {
+      "variant": "('המלצת איוש ואופן גיוס',)",
+      "frequency": 647
+    },
+    {
+      "variant": "('המלצת תקציב לגיוס',)",
+      "frequency": 644
+    }
+  ],
+  "workload_hotspots": [
+    {
+      "department": "מוסדות-ניהול עצמי",
+      "avg_open_cases": 15.73076923076923
+    },
+    {
+      "department": "רשות הספורט",
+      "avg_open_cases": 7.384615384615385
+    },
+    {
+      "department": "המח. לשירותי נקיון",
+      "avg_open_cases": 6.903846153846154
+    },
+    {
+      "department": "העצמה חינוכית וטיפול בפרט",
+      "avg_open_cases": 6.673076923076923
+    },
+    {
+      "department": "המחלקה לנוער",
+      "avg_open_cases": 6.1923076923076925
+    }
+  ],
+  "reassignment_impact": {
+    "mean_cycle_time_no_reassignment": 0.0315188102925043,
+    "mean_cycle_time_with_reassignment": 14.287518555004215,
+    "delta_days": 14.255999744711712,
+    "relative_increase_pct": 45230.13277598878
+  },
+  "priority_recommendations": [
+    {
+      "activity": "אישור קביעת מועד ועדה עבור הליך גיוס - מכרז",
+      "priority_score": 0.8262600260040136,
+      "mean_wait_days": 32.67451955685109,
+      "rework_ratio": 0.0942460317460317
+    },
+    {
+      "activity": "החלטת ועדת מכרזים (מכרז חיצוני + פנימי)",
+      "priority_score": 0.6590744373329165,
+      "mean_wait_days": 31.555418788580248,
+      "rework_ratio": 0.0459770114942528
+    },
+    {
+      "activity": "חוזה נחתם ע\"י כל הגורמים",
+      "priority_score": 0.6153792733356481,
+      "mean_wait_days": 36.59997608024692,
+      "rework_ratio": 0.0049875311720698
+    },
+    {
+      "activity": "מכרז פנימי לפרסום",
+      "priority_score": 0.5826810971009233,
+      "mean_wait_days": 11.143539640345091,
+      "rework_ratio": 0.1297208538587849
+    },
+    {
+      "activity": "החלטת ועדת מכרזים - התאמת מועמדים (מכרז פנימי) - מלבד רמ\"ד",
+      "priority_score": 0.5642457095966076,
+      "mean_wait_days": 33.492384118112014,
+      "rework_ratio": 0.0049261083743842
+    }
+  ],
+  "risk_signals": {
+    "long_tail_cycle_time": false,
+    "high_stage_wait": true,
+    "department_load_concentration": false
+  },
+  "result_quality": {
+    "present_sources": [
+      "case_performance",
+      "bottleneck_analysis",
+      "variants",
+      "workload_analysis",
+      "responsible_change_analysis",
+      "internal_process_analysis"
+    ],
+    "missing_sources": [],
+    "completeness_ratio": 1.0
+  },
+  "key_messages": [
+    "Long-tail performance remains material (P90 cycle time: 0.00 days).",
+    "Highest waiting stage is 'חוזה נחתם ע\"י כל הגורמים' with 36.60 mean days.",
+    "Reassignment is associated with a 45230.1% increase in cycle time."
+  ]
+}

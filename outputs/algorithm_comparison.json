@@ -1,0 +1,35 @@
+[
+  {
+    "algorithm": "Inductive Miner",
+    "places": 15,
+    "transitions": 59,
+    "arcs": 120,
+    "trace_fitness": 1.0,
+    "token_fitness": 1.0,
+    "fit_traces": 11922,
+    "total_traces": 11922,
+    "fit_pct": 100.0
+  },
+  {
+    "algorithm": "Heuristics Miner",
+    "places": 85,
+    "transitions": 189,
+    "arcs": 390,
+    "trace_fitness": 0.9497,
+    "token_fitness": 0.9759,
+    "fit_traces": 11322,
+    "total_traces": 11922,
+    "fit_pct": 95.0
+  },
+  {
+    "algorithm": "Alpha Miner",
+    "places": 202,
+    "transitions": 42,
+    "arcs": 1346,
+    "trace_fitness": 0.0002,
+    "token_fitness": 0.2618,
+    "fit_traces": 2,
+    "total_traces": 11922,
+    "fit_pct": 0.0
+  }
+]

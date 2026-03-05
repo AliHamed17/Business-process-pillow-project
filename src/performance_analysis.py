@@ -79,51 +79,23 @@ def analyze_performance(logfile_path, output_dir):
 
     stage_wait = df.groupby('activity')['wait_time_days'].agg(['mean', 'median', 'std', 'max']).reset_index()
     stage_wait.sort_values(by='mean', ascending=False, inplace=True)
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-    
-    role_wait = df.groupby('stage_responsible')['wait_time_days'].agg(['mean', 'median', 'count']).reset_index()
-    role_wait.sort_values(by='mean', ascending=False, inplace=True)
 
-    user_wait = df.groupby('resource')['wait_time_days'].agg(['mean', 'median', 'count']).reset_index()
-    user_wait.sort_values(by='mean', ascending=False, inplace=True)
+    # Role-level bottleneck
+    if 'stage_responsible' in df.columns:
+        role_wait = df.groupby('stage_responsible')['wait_time_days'].agg(['mean', 'median', 'count']).reset_index()
+        role_wait.sort_values(by='mean', ascending=False, inplace=True)
+        role_wait.to_csv(output_dir / 'role_bottleneck_analysis.csv', index=False)
 
-    # Save outputs
-    case_perf.to_csv(os.path.join(output_dir, 'case_performance.csv'), index=False)
-    stage_wait.to_csv(os.path.join(output_dir, 'bottleneck_analysis.csv'), index=False)
-    role_wait.to_csv(os.path.join(output_dir, 'role_bottleneck_analysis.csv'), index=False)
-    user_wait.to_csv(os.path.join(output_dir, 'user_bottleneck_analysis.csv'), index=False)
-    
-=======
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
+    # User-level bottleneck
+    if 'resource' in df.columns:
+        user_wait = df.groupby('resource')['wait_time_days'].agg(['mean', 'median', 'count']).reset_index()
+        user_wait.sort_values(by='mean', ascending=False, inplace=True)
+        user_wait.to_csv(output_dir / 'user_bottleneck_analysis.csv', index=False)
 
     case_perf.to_csv(output_dir / 'case_performance.csv', index=False)
     stage_wait.to_csv(output_dir / 'bottleneck_analysis.csv', index=False)
     _save_performance_plots(case_perf, stage_wait, df, output_dir)
 
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
     print("Performance analysis complete.")
 
 

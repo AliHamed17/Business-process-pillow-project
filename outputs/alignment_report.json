@@ -1,0 +1,23 @@
+{
+  "alignment_score_pct": 100.0,
+  "covered_checks": 16,
+  "total_checks": 16,
+  "checks": {
+    "delays_by_stage": true,
+    "delays_by_role_owner": true,
+    "delays_by_specific_user": true,
+    "delays_by_department": true,
+    "delays_by_outcome_status": true,
+    "variants_and_sequences": true,
+    "longest_delay_stages": true,
+    "workload_vs_speed": true,
+    "ownership_change_impact": true,
+    "internal_subprocess_impact": true,
+    "committee_screening_hotspots": true,
+    "legal_constraint_window_analysis": true,
+    "junior_position_special_path_analysis": true,
+    "station_mapping_to_process_narrative": true,
+    "operational_proposals_artifact": true,
+    "structured_final_report": true
+  }
+}

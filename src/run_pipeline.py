@@ -5,34 +5,30 @@ from pathlib import Path
 
 import pandas as pd
 
-try:
-    from cli_utils import ensure_exists, ensure_output_dir
-    from bottleneck_segmentation_analysis import analyze_bottleneck_segmentation
-    from data_preprocessing import preprocess_logs
-    from internal_process_analysis import analyze_internal_process
-    from performance_analysis import analyze_performance
-    from policy_path_analysis import analyze_policy_and_path_alignment
-    from process_discovery import generate_process_models
-    from responsible_change_analysis import analyze_responsible_change
-    from result_insights import generate_result_insights
-    from result_debugger import debug_results
-    from final_report_generator import generate_final_project_report
-    from alignment_report import generate_alignment_report
-    from workload_analysis import analyze_workload
-except ModuleNotFoundError:  # package-import fallback for tests
-    from .cli_utils import ensure_exists, ensure_output_dir
-    from .bottleneck_segmentation_analysis import analyze_bottleneck_segmentation
-    from .data_preprocessing import preprocess_logs
-    from .internal_process_analysis import analyze_internal_process
-    from .performance_analysis import analyze_performance
-    from .policy_path_analysis import analyze_policy_and_path_alignment
-    from .process_discovery import generate_process_models
-    from .responsible_change_analysis import analyze_responsible_change
-    from .result_insights import generate_result_insights
-    from .result_debugger import debug_results
-    from .final_report_generator import generate_final_project_report
-    from .alignment_report import generate_alignment_report
-    from .workload_analysis import analyze_workload
+import sys
+
+# Ensure the 'src' directory is in the Python path regardless of how the script is run
+sys.path.insert(0, str(Path(__file__).parent.resolve()))
+
+from cli_utils import ensure_exists, ensure_output_dir
+from bottleneck_segmentation_analysis import analyze_bottleneck_segmentation
+from data_preprocessing import preprocess_logs
+from internal_process_analysis import analyze_internal_process
+from performance_analysis import analyze_performance
+from policy_path_analysis import analyze_policy_and_path_alignment
+from process_discovery import generate_process_models
+from responsible_change_analysis import analyze_responsible_change
+from result_insights import generate_result_insights
+from result_debugger import debug_results
+from final_report_generator import generate_final_project_report
+from alignment_report import generate_alignment_report
+from workload_analysis import analyze_workload
+from sojourn_time_analysis import analyze_sojourn_times
+from temporal_trend_analysis import analyze_temporal_trends
+from statistical_tests import run_statistical_tests
+from algorithm_comparison import compare_algorithms
+from case_clustering_analysis import analyze_case_clusters
+from interactive_sna import generate_interactive_sna
 
 
 def parse_args():
@@ -98,6 +94,23 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'station_mapping_coverage.csv',
         'results_debug_report.json',
         'results_debug_report.md',
+        # P1 outputs
+        'sojourn_time_by_stage.csv',
+        'sojourn_time_by_department.csv',
+        'conformance_results.csv',
+        'conformance_violations.csv',
+        'conformance_summary.json',
+        'checkpoint_coverage.csv',
+        'responsible_change_controlled.csv',
+        # P2 outputs
+        'monthly_trend_stats.csv',
+        'monthly_cycle_time_trend.png',
+        'monthly_throughput.png',
+        'dotted_chart.png',
+        'statistical_tests.csv',
+        'statistical_tests.json',
+        'algorithm_comparison.csv',
+        'algorithm_comparison.json',
     ]
 
 
@@ -129,42 +142,64 @@ def main():
     file2 = ensure_exists(args.file2, "Excel file 2")
     output_dir = ensure_output_dir(args.output_dir)
 
-    print("Step 1/12: Data preprocessing")
+    print("Step 1/19: Data preprocessing")
     preprocess_logs(file1, file2, output_dir)
 
     cleaned_log = output_dir / "cleaned_log.csv"
+    xes_log = output_dir / "event_log.xes"
 
-    print("Step 2/12: Process discovery")
+    print("Step 2/19: Process discovery")
     generate_process_models(cleaned_log, output_dir, top_variants=args.top_variants)
 
-    print("Step 3/12: Performance analysis")
+    print("Step 3/19: Performance analysis")
     analyze_performance(cleaned_log, output_dir)
 
-    print("Step 4/12: Workload analysis")
+    print("Step 4/19: Workload analysis")
     analyze_workload(cleaned_log, output_dir)
 
-    print("Step 5/12: Responsible change analysis")
+    print("Step 5/19: Responsible change analysis")
     analyze_responsible_change(cleaned_log, output_dir)
 
-    print("Step 6/12: Internal process analysis")
+    print("Step 6/19: Internal process analysis")
     analyze_internal_process(cleaned_log, output_dir)
 
-    print("Step 7/12: Bottleneck segmentation analysis")
+    print("Step 7/19: Bottleneck segmentation analysis")
     analyze_bottleneck_segmentation(cleaned_log, output_dir)
 
-    print("Step 8/12: Executive summary")
+    print("Step 8/19: Sojourn time analysis")
+    analyze_sojourn_times(cleaned_log, output_dir)
+
+    print("Step 9/19: Temporal trend analysis")
+    analyze_temporal_trends(cleaned_log, output_dir)
+
+    print("Step 10/19: Statistical significance tests")
+    run_statistical_tests(cleaned_log, output_dir)
+
+    print("Step 11/19: Algorithm comparison")
+    if xes_log.exists():
+        compare_algorithms(xes_log, output_dir)
+    else:
+        print("  Skipping — event_log.xes not found")
+
+    print("Step 12/19: Executive summary")
     generate_result_insights(output_dir)
 
-    print("Step 9/12: Policy and path-specific analysis")
+    print("Step 13/19: Policy and path-specific analysis")
     analyze_policy_and_path_alignment(cleaned_log, output_dir)
 
-    print("Step 10/12: Final structured report generation")
+    print("Step 14/19: Final structured report generation")
     generate_final_project_report(output_dir)
 
-    print("Step 11/12: Alignment checklist report")
+    print("Step 15/19: Alignment checklist report")
     generate_alignment_report(output_dir)
 
-    print("Step 12/12: Results debug sanity checks")
+    print("Step 16/19: Case clustering (P3 Enhancement)")
+    analyze_case_clusters(cleaned_log, output_dir)
+
+    print("Step 17/19: Interactive SNA with Centrality (P3 Enhancement)")
+    generate_interactive_sna(output_dir / "handover_list.csv", output_dir / "interactive_sna.html")
+
+    print("Step 18/19: Results debug sanity checks")
     debug_results(output_dir)
 
     _write_pipeline_manifest(output_dir, top_variants=args.top_variants)

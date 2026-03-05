@@ -1,0 +1,22 @@
+{
+  "overall_status": "pass",
+  "checks": [
+    {
+      "check": "cycle_time_non_negative",
+      "status": "pass"
+    },
+    {
+      "check": "variant_frequency_positive",
+      "status": "pass"
+    },
+    {
+      "check": "workload_non_negative",
+      "status": "pass"
+    },
+    {
+      "check": "alignment_score_exists",
+      "status": "pass",
+      "value": 100.0
+    }
+  ]
+}

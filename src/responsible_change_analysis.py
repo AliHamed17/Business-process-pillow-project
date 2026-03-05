@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
@@ -65,6 +66,7 @@ def analyze_responsible_change(logfile_path, output_dir):
 
     case_changes = df.groupby('case_id').agg(
         reassignment_count=('responsible_change_flag', 'sum'),
+        event_count=('activity', 'size'),
         start_time=('timestamp', 'min'),
         end_time=('timestamp', 'max')
     ).reset_index()
@@ -74,6 +76,36 @@ def analyze_responsible_change(logfile_path, output_dir):
     ).dt.total_seconds() / (24 * 3600)
 
     case_changes['has_reassignment'] = case_changes['reassignment_count'] > 0
+
+    # ── Correlation analysis ──────────────────────────────────────────
+    # Compute Spearman rank correlation (robust to outliers) between
+    # reassignment count and cycle time.
+    try:
+        from scipy.stats import spearmanr
+        corr, pvalue = spearmanr(
+            case_changes['reassignment_count'],
+            case_changes['cycle_time_days']
+        )
+        print(f"[Responsible Change] Spearman corr(reassignments, cycle_time): "
+              f"{corr:.4f} (p={pvalue:.4e})")
+    except ImportError:
+        corr, pvalue = None, None
+
+    # ── Controlled comparison ─────────────────────────────────────────
+    # Bucket cases by event_count to control for case complexity.
+    # Within each bucket, compare cycle times with vs without reassignment.
+    case_changes['complexity_bucket'] = pd.qcut(
+        case_changes['event_count'], q=4, labels=False,
+        duplicates='drop'
+    )
+    controlled = case_changes.groupby(
+        ['complexity_bucket', 'has_reassignment']
+    )['cycle_time_days'].agg(['count', 'mean', 'median']).reset_index()
+    controlled.to_csv(
+        output_dir / 'responsible_change_controlled.csv', index=False
+    )
+
+    # ── Simple comparison (original) ──────────────────────────────────
     comparison = case_changes.groupby('has_reassignment')['cycle_time_days'].agg(
         ['count', 'mean', 'median', 'std']
     ).reset_index()

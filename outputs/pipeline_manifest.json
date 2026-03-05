@@ -1,0 +1,354 @@
+{
+  "generated_at_utc": "2026-03-05T21:58:16.314597+00:00",
+  "top_variants": 20,
+  "artifacts": [
+    {
+      "file": "cleaned_log.csv",
+      "exists": true,
+      "size_bytes": 10210179,
+      "row_count": 22299
+    },
+    {
+      "file": "event_log.xes",
+      "exists": true,
+      "size_bytes": 33676541,
+      "row_count": null
+    },
+    {
+      "file": "preprocessing_quality_report.json",
+      "exists": true,
+      "size_bytes": 323,
+      "row_count": null
+    },
+    {
+      "file": "variants.csv",
+      "exists": true,
+      "size_bytes": 1108,
+      "row_count": 20
+    },
+    {
+      "file": "case_performance.csv",
+      "exists": true,
+      "size_bytes": 1012270,
+      "row_count": 11922
+    },
+    {
+      "file": "bottleneck_analysis.csv",
+      "exists": true,
+      "size_bytes": 5098,
+      "row_count": 42
+    },
+    {
+      "file": "workload_analysis.csv",
+      "exists": true,
+      "size_bytes": 488183,
+      "row_count": 7904
+    },
+    {
+      "file": "responsible_change_analysis.csv",
+      "exists": true,
+      "size_bytes": 147,
+      "row_count": 2
+    },
+    {
+      "file": "internal_process_analysis.csv",
+      "exists": true,
+      "size_bytes": 4470,
+      "row_count": 42
+    },
+    {
+      "file": "bottleneck_by_stage.csv",
+      "exists": true,
+      "size_bytes": 2948,
+      "row_count": 42
+    },
+    {
+      "file": "bottleneck_by_stage_owner.csv",
+      "exists": true,
+      "size_bytes": 3349,
+      "row_count": 67
+    },
+    {
+      "file": "bottleneck_by_performer.csv",
+      "exists": true,
+      "size_bytes": 1329,
+      "row_count": 56
+    },
+    {
+      "file": "cycle_time_by_department.csv",
+      "exists": true,
+      "size_bytes": 14206,
+      "row_count": 153
+    },
+    {
+      "file": "cycle_time_by_request_status.csv",
+      "exists": true,
+      "size_bytes": 475,
+      "row_count": 6
+    },
+    {
+      "file": "keyword_bottleneck_analysis.csv",
+      "exists": true,
+      "size_bytes": 113,
+      "row_count": 2
+    },
+    {
+      "file": "activity_frequency_top15.png",
+      "exists": true,
+      "size_bytes": 69636,
+      "row_count": null
+    },
+    {
+      "file": "activity_transition_heatmap_top12.png",
+      "exists": true,
+      "size_bytes": 92406,
+      "row_count": null
+    },
+    {
+      "file": "variant_frequency_top15.png",
+      "exists": true,
+      "size_bytes": 45385,
+      "row_count": null
+    },
+    {
+      "file": "case_cycle_time_distribution.png",
+      "exists": true,
+      "size_bytes": 42945,
+      "row_count": null
+    },
+    {
+      "file": "bottleneck_top10_mean_wait.png",
+      "exists": true,
+      "size_bytes": 60278,
+      "row_count": null
+    },
+    {
+      "file": "bottleneck_wait_distribution_boxplot.png",
+      "exists": true,
+      "size_bytes": 72633,
+      "row_count": null
+    },
+    {
+      "file": "workload_trend_by_department.png",
+      "exists": true,
+      "size_bytes": 386447,
+      "row_count": null
+    },
+    {
+      "file": "workload_heatmap_department_week.png",
+      "exists": true,
+      "size_bytes": 448866,
+      "row_count": null
+    },
+    {
+      "file": "responsible_change_cycle_time_comparison.png",
+      "exists": true,
+      "size_bytes": 29374,
+      "row_count": null
+    },
+    {
+      "file": "responsible_change_cycle_time_boxplot.png",
+      "exists": true,
+      "size_bytes": 37520,
+      "row_count": null
+    },
+    {
+      "file": "responsible_change_count_distribution.png",
+      "exists": true,
+      "size_bytes": 30248,
+      "row_count": null
+    },
+    {
+      "file": "internal_rework_ratio_top10.png",
+      "exists": true,
+      "size_bytes": 52812,
+      "row_count": null
+    },
+    {
+      "file": "internal_rework_duration_scatter.png",
+      "exists": true,
+      "size_bytes": 42129,
+      "row_count": null
+    },
+    {
+      "file": "bottleneck_by_stage_owner_top10.png",
+      "exists": true,
+      "size_bytes": 37815,
+      "row_count": null
+    },
+    {
+      "file": "bottleneck_by_performer_top10.png",
+      "exists": true,
+      "size_bytes": 24239,
+      "row_count": null
+    },
+    {
+      "file": "cycle_time_by_request_status.png",
+      "exists": true,
+      "size_bytes": 36544,
+      "row_count": null
+    },
+    {
+      "file": "keyword_bottleneck_waits.png",
+      "exists": true,
+      "size_bytes": 26805,
+      "row_count": null
+    },
+    {
+      "file": "executive_summary.json",
+      "exists": true,
+      "size_bytes": 5004,
+      "row_count": null
+    },
+    {
+      "file": "executive_summary.md",
+      "exists": true,
+      "size_bytes": 2748,
+      "row_count": null
+    },
+    {
+      "file": "executive_dashboard.png",
+      "exists": true,
+      "size_bytes": 51801,
+      "row_count": null
+    },
+    {
+      "file": "alignment_report.json",
+      "exists": true,
+      "size_bytes": 740,
+      "row_count": null
+    },
+    {
+      "file": "alignment_report.md",
+      "exists": true,
+      "size_bytes": 592,
+      "row_count": null
+    },
+    {
+      "file": "final_project_report.md",
+      "exists": true,
+      "size_bytes": 8362,
+      "row_count": null
+    },
+    {
+      "file": "legal_interval_analysis.csv",
+      "exists": true,
+      "size_bytes": 567,
+      "row_count": 4
+    },
+    {
+      "file": "junior_position_path_analysis.csv",
+      "exists": true,
+      "size_bytes": 92,
+      "row_count": 1
+    },
+    {
+      "file": "station_mapping_coverage.csv",
+      "exists": true,
+      "size_bytes": 1802,
+      "row_count": 9
+    },
+    {
+      "file": "results_debug_report.json",
+      "exists": true,
+      "size_bytes": 403,
+      "row_count": null
+    },
+    {
+      "file": "results_debug_report.md",
+      "exists": true,
+      "size_bytes": 208,
+      "row_count": null
+    },
+    {
+      "file": "sojourn_time_by_stage.csv",
+      "exists": true,
+      "size_bytes": 5209,
+      "row_count": 42
+    },
+    {
+      "file": "sojourn_time_by_department.csv",
+      "exists": true,
+      "size_bytes": 14117,
+      "row_count": 152
+    },
+    {
+      "file": "conformance_results.csv",
+      "exists": true,
+      "size_bytes": 316733,
+      "row_count": 11922
+    },
+    {
+      "file": "conformance_violations.csv",
+      "exists": true,
+      "size_bytes": 654027,
+      "row_count": 11922
+    },
+    {
+      "file": "conformance_summary.json",
+      "exists": true,
+      "size_bytes": 135,
+      "row_count": null
+    },
+    {
+      "file": "checkpoint_coverage.csv",
+      "exists": false,
+      "size_bytes": null,
+      "row_count": null
+    },
+    {
+      "file": "responsible_change_controlled.csv",
+      "exists": true,
+      "size_bytes": 129,
+      "row_count": 2
+    },
+    {
+      "file": "monthly_trend_stats.csv",
+      "exists": true,
+      "size_bytes": 987,
+      "row_count": 12
+    },
+    {
+      "file": "monthly_cycle_time_trend.png",
+      "exists": true,
+      "size_bytes": 71511,
+      "row_count": null
+    },
+    {
+      "file": "monthly_throughput.png",
+      "exists": true,
+      "size_bytes": 42009,
+      "row_count": null
+    },
+    {
+      "file": "dotted_chart.png",
+      "exists": true,
+      "size_bytes": 51143,
+      "row_count": null
+    },
+    {
+      "file": "statistical_tests.csv",
+      "exists": true,
+      "size_bytes": 2043,
+      "row_count": 12
+    },
+    {
+      "file": "statistical_tests.json",
+      "exists": true,
+      "size_bytes": 4477,
+      "row_count": null
+    },
+    {
+      "file": "algorithm_comparison.csv",
+      "exists": true,
+      "size_bytes": 262,
+      "row_count": 3
+    },
+    {
+      "file": "algorithm_comparison.json",
+      "exists": true,
+      "size_bytes": 725,
+      "row_count": null
+    }
+  ]
+}

@@ -67,11 +67,11 @@
                             >
                                 <option selected>Select a Node by ID</option>
                                 
+                                    <option value="4">4</option>
+                                
                                     <option value="1">1</option>
                                 
                                     <option value="2">2</option>
-                                
-                                    <option value="4">4</option>
                                 
                             </select>
                         </div>
@@ -293,7 +293,7 @@
                   
 
                   // parsing and collecting nodes and edges from the python
-                  nodes = new vis.DataSet([{"color": "#3498db", "font": {"color": "white"}, "id": 1, "label": "1", "shape": "dot", "title": "Resource: 1"}, {"color": "#3498db", "font": {"color": "white"}, "id": 2, "label": "2", "shape": "dot", "title": "Resource: 2"}, {"color": "#3498db", "font": {"color": "white"}, "id": 4, "label": "4", "shape": "dot", "title": "Resource: 4"}]);
+                  nodes = new vis.DataSet([{"color": "#3296c8", "font": {"color": "white"}, "id": 4, "label": "4", "shape": "dot", "size": 18, "title": "Resource: 4\nDegree: 4\nBetweenness: 0.0000\nCloseness: 5.7430"}, {"color": "#ff3232", "font": {"color": "white"}, "id": 1, "label": "1", "shape": "dot", "size": 22, "title": "Resource: 1\nDegree: 6\nBetweenness: 1.0000\nCloseness: 9.5773"}, {"color": "#3296c8", "font": {"color": "white"}, "id": 2, "label": "2", "shape": "dot", "size": 14, "title": "Resource: 2\nDegree: 2\nBetweenness: 0.0000\nCloseness: 6.6574"}]);
                   edges = new vis.DataSet([{"arrows": "to", "from": 4.0, "title": "Weight: 0.07", "to": 4.0, "value": 0.0730999695680116, "width": 1.365499847840058}, {"arrows": "to", "from": 4.0, "title": "Weight: 0.12", "to": 1.0, "value": 0.1230395431118215, "width": 1.6151977155591075}, {"arrows": "to", "from": 1.0, "title": "Weight: 0.45", "to": 1.0, "value": 0.4486375122384234, "width": 3.243187561192117}, {"arrows": "to", "from": 1.0, "title": "Weight: 0.09", "to": 2.0, "value": 0.0886893146774549, "width": 1.4434465733872746}]);
 
                   nodeColors = {};

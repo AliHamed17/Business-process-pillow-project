@@ -84,6 +84,22 @@ def preprocess_logs(file_path1, file_path2, output_dir):
     dropped_duplicates = before_drop_dupes - len(df)
     print(f"Dropped {dropped_duplicates} duplicate rows")
 
+    # ── Consecutive duplicate activity removal ──────────────────────────
+    # Academic justification: The raw log records every field-level change
+    # as a separate event.  When a user updates 5 fields inside stage
+    # "אישור מנהל אגף", the log contains 5 rows with the *same* activity
+    # name.  Without collapsing these, the DFG and variant analysis will
+    # show false self-loops and mono-stage "variants" (e.g. the same
+    # activity repeated 10+ times).  This step keeps only the *first*
+    # occurrence of each consecutive run, preserving genuine stage
+    # transitions while eliminating intra-stage noise.
+    before_consec = len(df)
+    df['_prev_activity'] = df.groupby('case_id')['activity'].shift(1)
+    df = df[df['activity'] != df['_prev_activity']].copy()
+    df.drop(columns=['_prev_activity'], inplace=True)
+    dropped_consecutive = before_consec - len(df)
+    print(f"Dropped {dropped_consecutive} consecutive duplicate activity rows")
+
     output_csv = Path(output_dir) / 'cleaned_log.csv'
     df.to_csv(output_csv, index=False, encoding='utf-8-sig')
     print(f"Cleaned CSV saved to {output_csv}")
@@ -113,6 +129,7 @@ def preprocess_logs(file_path1, file_path2, output_dir):
         'rows_after_cleaning': int(len(df)),
         'dropped_missing_core_fields': int(dropped_missing),
         'dropped_duplicates': int(dropped_duplicates),
+        'dropped_consecutive_duplicates': int(dropped_consecutive),
         'unique_cases': int(df['case_id'].nunique()),
         'unique_activities': int(df['activity'].nunique()),
         'timestamp_min': df['timestamp'].min().isoformat() if not df.empty else None,
