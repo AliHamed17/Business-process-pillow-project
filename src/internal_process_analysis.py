@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import annotate_bars, finalize_and_save, set_plot_style
+    from plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, fix_hebrew, set_plot_style, truncate_label
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import annotate_bars, finalize_and_save, set_plot_style
+    from .plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, fix_hebrew, set_plot_style, truncate_label
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'event_type', 'timestamp']
@@ -19,22 +19,47 @@ def _save_internal_process_plots(stage_complexity, output_dir: Path) -> None:
     top_rework = stage_complexity.sort_values('rework_ratio', ascending=False).head(10)
     if not top_rework.empty:
         fig, ax = plt.subplots(figsize=(9, 5))
-        ax.barh(top_rework['activity'].astype(str), top_rework['rework_ratio'], color='#8172B2')
+        ax.barh([fix_hebrew(x) for x in top_rework['activity'].astype(str)], top_rework['rework_ratio'], color='#8172B2')
         ax.invert_yaxis()
-        ax.set_title('Top 10 Activities by Rework Ratio')
-        ax.set_xlabel('Rework Ratio')
-        ax.set_ylabel('Activity')
+        apply_rtl_text(ax, title='Top 10 Activities by Rework Ratio', xlabel='Rework Ratio', ylabel='Activity')
         annotate_bars(ax, horizontal=True)
         finalize_and_save(fig, output_dir / 'internal_rework_ratio_top10.png')
 
     # Scatter to inspect duration-vs-rework relationship
     scatter_df = stage_complexity.dropna(subset=['rework_ratio', 'avg_duration_days'])
     if not scatter_df.empty:
-        fig, ax = plt.subplots(figsize=(8, 5))
-        ax.scatter(scatter_df['avg_duration_days'], scatter_df['rework_ratio'], alpha=0.75, color='#C44E52')
-        ax.set_title('Stage Duration vs Rework Ratio')
-        ax.set_xlabel('Average Stage Duration (Days)')
-        ax.set_ylabel('Rework Ratio')
+        fig, ax = plt.subplots(figsize=(9, 6))
+        scatter = ax.scatter(
+            scatter_df['avg_duration_days'],
+            scatter_df['rework_ratio'],
+            s=scatter_df['total_cases'].clip(lower=1) * 3,
+            c=scatter_df['avg_events_per_case'],
+            cmap='YlOrRd',
+            alpha=0.8,
+            edgecolors='grey',
+            linewidths=0.5,
+        )
+        hotspot_rank = (
+            scatter_df['avg_duration_days']
+            * scatter_df['rework_ratio']
+            * scatter_df['total_cases'].clip(lower=1)
+        )
+        for idx in hotspot_rank.nlargest(8).index:
+            row = scatter_df.loc[idx]
+            ax.annotate(
+                truncate_label(row['activity'], 28),
+                (row['avg_duration_days'], row['rework_ratio']),
+                xytext=(4, 4),
+                textcoords='offset points',
+                fontsize=8,
+            )
+        apply_rtl_text(
+            ax,
+            title='Internal Complexity vs Stage Duration',
+            xlabel='Average Stage Duration (Days)',
+            ylabel='Rework Ratio',
+        )
+        plt.colorbar(scatter, ax=ax, label='Average Events per Case')
         finalize_and_save(fig, output_dir / 'internal_rework_duration_scatter.png')
 
 

@@ -8,8 +8,43 @@ import pm4py
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, validate_columns
+    from plot_utils import apply_rtl_text, annotate_bars, finalize_and_save, set_plot_style
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, validate_columns
+    from .plot_utils import apply_rtl_text, annotate_bars, finalize_and_save, set_plot_style
+
+def _plot_preprocessing_waterfall(q_rep: dict, output_dir: Path) -> None:
+    set_plot_style()
+    import matplotlib.pyplot as plt
+    labels = ['Initial Load', 'Drop Missing', 'Drop Exact Dupes', 'Drop Consecutive', 'Final Cleaned']
+    
+    start = q_rep['rows_after_merge']
+    d_miss = -q_rep['dropped_missing_core_fields']
+    d_dup = -q_rep['dropped_duplicates']
+    d_consec = -q_rep['dropped_consecutive_duplicates']
+    final = q_rep['rows_after_cleaning']
+    
+    values = [start, d_miss, d_dup, d_consec, final]
+    
+    # Calculate bottom positions
+    bottoms = [0, start + d_miss, start + d_miss + d_dup, start + d_miss + d_dup + d_consec, 0]
+    
+    # Positive changes (start, final) in blue, negative in red
+    colors = ['#4C72B0', '#C44E52', '#C44E52', '#C44E52', '#55A868']
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bars = ax.bar(labels, [abs(v) for v in values], bottom=bottoms, color=colors)
+    
+    apply_rtl_text(ax, title='Log Preprocessing Impact (Event Count Remaining)', ylabel='Event Count')
+    
+    for bar, val in zip(bars, values):
+        height = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_y() + height / 2,
+                f"{val:+d}" if val < 0 else f"{val:d}",
+                ha='center', va='center', color='white', fontweight='bold')
+    
+    finalize_and_save(fig, output_dir / 'preprocessing_waterfall.png')
+
 
 
 SOURCE_REQUIRED_COLUMNS = [
@@ -138,6 +173,8 @@ def preprocess_logs(file_path1, file_path2, output_dir):
     quality_path = Path(output_dir) / 'preprocessing_quality_report.json'
     quality_path.write_text(json.dumps(quality_report, indent=2, ensure_ascii=False), encoding='utf-8')
     print(f"Preprocessing quality report saved to {quality_path}")
+
+    _plot_preprocessing_waterfall(quality_report, Path(output_dir))
 
     return df, event_log
 

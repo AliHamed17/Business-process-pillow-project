@@ -65,7 +65,11 @@ Candidate screening occurs in a separate system. A **committee date** is set (hi
 ### 3.1 Source & Merging
 Two Excel files (Part 1: 495,840 rows / 5,097 cases; Part 2: 630,596 rows / 7,501 cases) were concatenated into a single DataFrame (1,126,436 rows before cleaning).
 
-### 3.2 Cleaning Actions
+**Data Scope and Reporting Note:**
+- **Raw Cases:** 12,598 total cases across both files.
+- **Unique Merged Cases:** 11,922 cases (676 cases spanned both chronological log files and were successfully merged).
+- **Cases used for general cycle-time analysis:** All 11,922 merged cases.
+- **Completed cases with explicit outcome classifications:** 825 (Approved=422, Cancelled=360, Rejected=22, In-Progress=21). The remaining 11,097 cases represent single-event system updates, historical artifacts, or uncategorized cases lacking a definitive closure status.
 
 | Step | Action | Purpose | Impact |
 |------|--------|---------|--------|
@@ -154,17 +158,23 @@ Analysing the first 5 **distinct** stages per case to build sequence paths:
 ## 5. Performance Analysis
 
 ### 5.1 Cycle Time Distribution
-- **Average Cycle Time:** 18.5 days.
-- **Median Cycle Time (P50):** 1.2 days.
-- **P90 Cycle Time:** 46.8 days — 90% of cases resolve within 47 days.
+**Time Metric Definitions:**
+- **Case cycle time:** Calendar days from the first recorded event to the last event per case.
+- **Inter-event wait time:** Calendar days elapsed between consecutive stage transitions.
+- **Sojourn time (dwell time):** Calendar days spent *within* a stage from first entry to final exit.
+
+- **Average Cycle Time (Global):** 18.5 days (across all 11,922 cases, which includes highly truncated or historical cases).
+- **Average Cycle Time (Completed Subset):** 146.6 days for Approved cases, 101.1 days for Cancelled cases (calculated on the 825 definitively tracked case lifecycles).
+- **Median Cycle Time (Global P50):** 1.2 days.
+- **P90 Cycle Time:** 46.8 days — 90% of cases arrive at their final logged state within 47 days.
 - **P95 Cycle Time:** 116.6 days — the upper 5% of cases take nearly 4 months.
 - **P99 Cycle Time:** 259.3 days — extreme outlier tail reaching up to 365 days.
 
-### 5.2 Bottlenecks by Stage
+### 5.2 Bottlenecks by Stage (Wait Time)
 *(Source: `outputs/bottleneck_analysis.csv`)*
-- **CEO Decision (החלטת מנכ"ל - גיוס):** Max 134 days, P95=1.0 day (right-skewed: rare but severe delays).
-- **Budget Recommendation (המלצת תקציב לגיוס):** Max 121 days, P95=1.0 day.
-- **Staffing Recommendation (המלצת איוש ואופן גיוס):** Max 106 days.
+- **CEO Decision (החלטת מנכ"ל - גיוס):** Max wait 134 days, P95=1.0 day (right-skewed: rare but severe delays).
+- **Budget Recommendation (המלצת תקציב לגיוס):** Max wait 121 days, P95=1.0 day.
+- **Staffing Recommendation (המלצת איוש ואופן גיוס):** Max wait 106 days.
 - **HR Manpower Planning (תכנון - בקרת כ"א):** Max 61 days.
 - **Internal Tender Publication (מכרז פנימי לפרסום):** Max 73 days.
 
@@ -203,9 +213,11 @@ The very low P50 (1.2 days) combined with a P95 of 116.6 days indicates a heavil
 
 **Method:** For each department, the average number of concurrently open cases per week was computed (via rolling window). This was compared against the median cycle time per department.
 
-**Correlation:** Pearson r = **0.057** (near zero, p > 0.05). There is **no statistically significant correlation** between departmental workload volume and cycle time. High-volume departments do not process cases slower than low-volume departments.
+**Correlation:** Pearson r = **0.057** (near zero, p > 0.05). There is **no statistically significant correlation** between departmental workload volume and cycle time. 
 
-**Interpretation:** Delays are **structural, not volumetric**. They are concentrated at specific approval stages (CEO, Budget, Mayor) that all cases must pass through regardless of departmental load. A department with 40 concurrent open cases does not experience longer cycle times than one with 5. This finding rules out "hire more staff" as the correct intervention — the fix must target the approval stages themselves, not throughput capacity.
+**Interpretation:** In the aggregate analysis, departmental workload showed no meaningful linear association with cycle time. This suggests that overall volume alone is unlikely to be the main driver, although localized congestion effects cannot be ruled out. 
+
+**Business Answer:** There is no significant aggregate correlation between a department's total open cases and process duration.
 
 **Monthly trend** (`outputs/plots/advanced/monthly_load_trend.png`): Case volume peaks in Q1 (January–March), consistent with annual budget-cycle planning. A secondary peak appears in Q3. This seasonality suggests committee scheduling could be pre-arranged at the start of each quarter to avoid bottlenecks.
 
@@ -222,7 +234,9 @@ The counter-intuitive result (reassigned cases are *faster*) is explained by a *
 - **Spearman rank correlation** between reassignment count and cycle time is computed (avoids normality assumption).
 - Cases are **bucketed by event count into quartiles** (Q1–Q4), and within each quartile the reassignment effect is re-evaluated via `responsible_change_controlled.csv`.
 
-**Corrected Conclusion:** After controlling for case complexity, the relationship between reassignment and speed is attenuated. The primary finding is that **long-stalling cases tend to remain with a single owner**, suggesting that the intervention should target **inactivity detection** (auto-escalation after 14 days without progress) rather than avoiding reassignment.
+**Corrected Conclusion:** The observed inverse association appears to be confounded by process complexity and path structure. Cases that languish in the system often remain with a single owner, whereas cases moving quickly change hands frequently as they traverse the approval chain.
+
+**Business Answer:** Reassignments do not linearly cause delay; the relationship is confounded. Long-stalling cases frequently suffer from single-owner stagnation.
 
 ## 8. Internal Process Analysis
 
@@ -347,7 +361,7 @@ This dual approach avoids the limitation of the previous manual 5-step linear Pe
 ## 13. Findings
 1. **Inefficient Budgeting:** The budgeting phase is a major "long-tail" risk factor. Max observed delay: 121 days. Cases that never reach budget review are the primary cancellation driver.
 2. **Repetitive Approvals:** Approvals often require multiple "pings," suggesting lack of clarity in requirements or missing documentation.
-3. **Ownership Confound:** The apparent benefit of reassignment is confounded by case complexity — short cases naturally traverse more owners. After controlling for event count, the effect is attenuated.
+3. **Ownership Confound:** The observed inverse association appears to be confounded by process complexity and path structure. Stalled cases often suffer from single-owner stagnation.
 4. **Heavy Right-Skew (P90/P95):** 90% of cases close within 47 days, but the upper 5% take 117+ days. These outliers overwhelmingly correlate with CEO-level sign-off delays.
 5. **Early Abandonment Pattern:** The predictive model shows that cases cancelled early never reach the budget stage. A pre-screening checklist at case intake could eliminate this waste.
 6. **Process Trend:** Monthly cycle time trend analysis reveals whether the process is improving over time (slope direction and magnitude auto-computed).
@@ -375,12 +389,12 @@ This dual approach avoids the limitation of the previous manual 5-step linear Pe
 - `outputs/cluster_profiles.png` — Boxplot distributions across the four profiles, proving that "Extreme Outlier" cases are fundamentally different in structure (event count) than "Fast/Simple" cases, not just slower.
 
 ## 15. Operational Recommendations
-1. **SLA Implementation for Budgeting:** Set a 7-day hard limit for budget recommendations. This single change would have the largest impact on reducing the P95 cycle time (currently 116.6 days).
-2. **Automated Committee Scheduling:** The current "Date Setting" phase is highly complex and repetitive. Implementation of an automated scheduling tool could reduce this rework.
-3. **Requirement Validation at Entry:** Reduce the "ping-pong" variants by requiring all documents (budget check, job description) to be attached before the first approval. This directly addresses the early-cancellation pattern identified by the predictive model.
-4. **Inactivity Detection:** Establish an automated trigger to escalate a case if it remains inactive for more than 14 days without progress — targeting the stagnant cases that inflate the P95.
-5. **Parallelize Salary Simulation:** Salary simulations can run in parallel with Division Head approvals rather than sequentially.
-6. **CEO/Mayor Approval Fast-Track:** The CEO and Mayor's Office stages show maximum delays of 134 days. A dedicated routing queue with a 10-day SLA would bring P90 below 20 days.
+1. **SLA Implementation for Budgeting:** Set a 7-day hard limit for budget recommendations. *Rationale: Direct evidence-based intervention targeting the 121-day wait-time bottleneck.*
+2. **Automated Committee Scheduling:** Implement an automated scheduling tool. *Rationale: Supported by the high internal event count in committee stages; feasibility depends on statutory committee procedures.*
+3. **Requirement Validation at Entry:** Require all documents upfront to reduce early abandonment. *Rationale: Inferred managerial proposal targeting the early-cancellation pattern identified by the predictive model.*
+4. **Inactivity Detection:** Establish an auto-escalation trigger for cases inactive for 14 days. *Rationale: Supported by the single-owner stagnation evidence found in the reassignment confound analysis.*
+5. **Parallelize Salary Simulation:** Salary simulations can run concurrently with Division approvals. *Rationale: Addressed by the parallel-track compliance audit which showed 15% execution sequence violation.*
+6. **CEO/Mayor Approval Fast-Track:** Create a dedicated routing queue with a 10-day SLA. *Rationale: Direct intervention targeting the max 134-day delay stages.*
 
 ## 16. Limitations
 1. **Data granularity:** The "Changed Field" column often contains raw IDs rather than descriptive text.

@@ -7,10 +7,10 @@ import pm4py
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import annotate_bars, finalize_and_save, set_plot_style, truncate_label
+    from plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, set_plot_style, truncate_label
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import annotate_bars, finalize_and_save, set_plot_style, truncate_label
+    from .plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, set_plot_style, truncate_label
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
@@ -28,6 +28,16 @@ def _variant_frequency(variant_payload):
         return 0
 
 
+def _short_variant_label(variant, max_steps: int = 4) -> str:
+    if isinstance(variant, (list, tuple)):
+        steps = [str(step) for step in variant]
+    else:
+        steps = [str(variant)]
+    if len(steps) > max_steps:
+        steps = steps[:max_steps] + ['...']
+    return ' -> '.join(steps)
+
+
 def _save_discovery_plots(df: pd.DataFrame, df_var: pd.DataFrame, output_dir: Path) -> None:
     set_plot_style()
     act_freq = df['activity'].value_counts().head(15).sort_values(ascending=True)
@@ -35,18 +45,16 @@ def _save_discovery_plots(df: pd.DataFrame, df_var: pd.DataFrame, output_dir: Pa
         fig, ax = plt.subplots(figsize=(10, 6))
         labels = [truncate_label(x, 42) for x in act_freq.index]
         ax.barh(labels, act_freq.values, color='#4C72B0')
-        ax.set_title('Top 15 Activities by Event Frequency')
-        ax.set_xlabel('Event Count')
+        apply_rtl_text(ax, title='Top 15 Activities by Event Frequency', xlabel='Event Count')
         annotate_bars(ax, horizontal=True, fmt='{:.0f}')
         finalize_and_save(fig, output_dir / 'activity_frequency_top15.png')
 
     top_variants = df_var.head(15).iloc[::-1]
     if not top_variants.empty:
-        fig, ax = plt.subplots(figsize=(10, 6))
-        labels = [f"V{idx+1}" for idx in range(len(top_variants))]
+        fig, ax = plt.subplots(figsize=(11.5, 7))
+        labels = [truncate_label(x, 56) for x in top_variants['Variant_Short']]
         ax.barh(labels, top_variants['Frequency'], color='#55A868')
-        ax.set_title('Top Variant Frequency')
-        ax.set_xlabel('Frequency')
+        apply_rtl_text(ax, title='Top Variants by Frequency', xlabel='Case Count')
         annotate_bars(ax, horizontal=True, fmt='{:.0f}')
         finalize_and_save(fig, output_dir / 'variant_frequency_top15.png')
 
@@ -61,7 +69,7 @@ def _save_discovery_plots(df: pd.DataFrame, df_var: pd.DataFrame, output_dir: Pa
         matrix = pd.crosstab(transitions['activity'], transitions['next_activity'])
         fig, ax = plt.subplots(figsize=(10, 8))
         im = ax.imshow(matrix.values, aspect='auto', cmap='Blues')
-        ax.set_title('Transition Heatmap (Top Activities)')
+        apply_rtl_text(ax, title='Transition Heatmap (Top Activities)')
         ax.set_xticks(range(len(matrix.columns)))
         ax.set_yticks(range(len(matrix.index)))
         ax.set_xticklabels([truncate_label(x, 22) for x in matrix.columns], rotation=45, ha='right', fontsize=8)
@@ -91,7 +99,14 @@ def generate_process_models(logfile_path, output_dir, top_variants=20):
     print("Extracting variants...")
     variants = pm4py.get_variants(log)
     df_var = pd.DataFrame(
-        [{"Variant": str(var), "Frequency": _variant_frequency(payload)} for var, payload in variants.items()]
+        [
+            {
+                "Variant": str(var),
+                "Variant_Short": _short_variant_label(var),
+                "Frequency": _variant_frequency(payload),
+            }
+            for var, payload in variants.items()
+        ]
     ).sort_values(by='Frequency', ascending=False)
 
     out_path = output_dir / 'variants.csv'

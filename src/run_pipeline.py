@@ -29,6 +29,10 @@ from statistical_tests import run_statistical_tests
 from algorithm_comparison import compare_algorithms
 from case_clustering_analysis import analyze_case_clusters
 from interactive_sna import generate_interactive_sna
+from advanced_visualizations import generate_advanced_plots
+from bonus_visualizations import generate_sankey_diagram, generate_sunburst_chart, generate_time_heatmap
+from extended_visualizations import generate_extended_plots
+from department_analysis import analyze_department_performance
 
 
 def parse_args():
@@ -71,12 +75,15 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'variant_frequency_top15.png',
         'case_cycle_time_distribution.png',
         'bottleneck_top10_mean_wait.png',
+        'bottleneck_delay_contribution_pareto.png',
         'bottleneck_wait_distribution_boxplot.png',
         'workload_trend_by_department.png',
         'workload_heatmap_department_week.png',
+        'department_workload_vs_cycle_time.png',
         'responsible_change_cycle_time_comparison.png',
         'responsible_change_cycle_time_boxplot.png',
         'responsible_change_count_distribution.png',
+        'responsible_change_lift_by_complexity.png',
         'internal_rework_ratio_top10.png',
         'internal_rework_duration_scatter.png',
         'bottleneck_by_stage_owner_top10.png',
@@ -106,11 +113,32 @@ def _write_pipeline_manifest(output_dir: Path, top_variants: int) -> None:
         'monthly_trend_stats.csv',
         'monthly_cycle_time_trend.png',
         'monthly_throughput.png',
+        'monthly_backlog_trend.png',
         'dotted_chart.png',
-        'statistical_tests.csv',
         'statistical_tests.json',
         'algorithm_comparison.csv',
         'algorithm_comparison.json',
+        # Visualizations enhancements
+        'plots/advanced/dept_cycle_time_violin.png',
+        'plots/advanced/monthly_load_trend.png',
+        'plots/advanced/resource_efficiency_frontier.png',
+        'plots/advanced/variant_treemap.png',
+        'plots/advanced/stage_bottleneck_heatmap.png',
+        'plots/advanced/bonus_sankey_flow.html',
+        'plots/advanced/bonus_sunburst_outcomes.html',
+        'plots/advanced/bonus_activity_time_heatmap.png',
+        'plots/extended/cumulative_flow_diagram.png',
+        'plots/extended/activity_pareto.png',
+        'plots/extended/radar_day_of_week.png',
+        'plots/extended/transition_duration_heatmap.png',
+        'plots/extended/self_loop_frequency.png',
+        'plots/extended/cycle_time_kde.png',
+        'plots/extended/events_vs_time_scatter.png',
+        'plots/extended/activity_duration_boxplots.png',
+        'plots/extended/day_hour_heatmap.png',
+        'plots/advanced/department_avg_cycle_time.png',
+        'plots/advanced/department_case_status.png',
+        'plots/advanced/department_handover_heatmap.png',
     ]
 
 
@@ -199,8 +227,26 @@ def main():
     print("Step 17/19: Interactive SNA with Centrality (P3 Enhancement)")
     generate_interactive_sna(output_dir / "handover_list.csv", output_dir / "interactive_sna.html")
 
-    print("Step 18/19: Results debug sanity checks")
+    print("Step 18/21: Results debug sanity checks")
     debug_results(output_dir)
+
+    print("Step 19/21: Advanced process mining plots")
+    generate_advanced_plots(cleaned_log, output_dir)
+    
+    print("Step 20/21: Bonus interaction visualizations (HTML + Heatmaps)")
+    df_bonus = pd.read_csv(cleaned_log, encoding='utf-8-sig') # need a df for bonus
+    df_bonus['timestamp'] = pd.to_datetime(df_bonus['timestamp'])
+    bonus_out = output_dir / "plots" / "advanced"
+    bonus_out.mkdir(parents=True, exist_ok=True)
+    generate_sankey_diagram(df_bonus, bonus_out)
+    generate_sunburst_chart(df_bonus, bonus_out)
+    generate_time_heatmap(df_bonus, bonus_out)
+
+    print("Step 21/22: Extended process behavior analysis plots")
+    generate_extended_plots(cleaned_log, output_dir)
+
+    print("Step 22/22: Department-level performance analysis")
+    analyze_department_performance(cleaned_log, output_dir)
 
     _write_pipeline_manifest(output_dir, top_variants=args.top_variants)
     print(f"Pipeline completed successfully. Outputs available in: {output_dir}")

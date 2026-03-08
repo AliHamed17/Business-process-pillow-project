@@ -1,0 +1,18 @@
+patient, action, DateTime, org:resource
+P1,Registration,2024-01-01 10:00:00,Dr. A
+P1,Triage,2024-01-01 11:00:00,Nurse B
+P1,Surgery,2024-01-02 09:00:00,Dr. C
+P2,Registration,2024-01-01 08:00:00,Dr. A
+P2,Consultation,2024-01-01 09:30:00,Dr. B
+P3,Registration,2024-01-03 12:00:00,Dr. A
+P3,Triage,2024-01-03 12:30:00,Nurse B
+P3,X-Ray,2024-01-03 13:00:00,Tech C
+P3,Discharge,2024-01-04 10:00:00,Dr. A
+P4,Registration,2024-01-05 07:00:00,Dr. B
+P4,Surgery,2024-01-05 15:00:00,Dr. C
+P5,Registration,2024-01-06 09:00:00,Dr. A
+P5,Triage,2024-01-06 09:15:00,Nurse B
+P5,Consultation,2024-01-06 10:00:00,Dr. B
+P5,Surgery,2024-01-07 08:00:00,Dr. C
+P6,Registration,2024-01-08 11:00:00,Dr. A
+P6,Discharge,2024-01-08 11:30:00,Dr. A

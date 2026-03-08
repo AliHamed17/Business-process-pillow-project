@@ -1,0 +1,527 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="imdf_net_1772926462.1047022" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text>imdf_net_1772926462.1047022</text>
+    </name>
+    <page id="n0">
+      <place id="p_12">
+        <name>
+          <text>p_12</text>
+        </name>
+      </place>
+      <place id="p_13">
+        <name>
+          <text>p_13</text>
+        </name>
+      </place>
+      <place id="p_16">
+        <name>
+          <text>p_16</text>
+        </name>
+      </place>
+      <place id="p_14">
+        <name>
+          <text>p_14</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_3">
+        <name>
+          <text>p_3</text>
+        </name>
+      </place>
+      <place id="p_4">
+        <name>
+          <text>p_4</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="p_5">
+        <name>
+          <text>p_5</text>
+        </name>
+      </place>
+      <place id="p_6">
+        <name>
+          <text>p_6</text>
+        </name>
+      </place>
+      <place id="p_7">
+        <name>
+          <text>p_7</text>
+        </name>
+      </place>
+      <place id="p_8">
+        <name>
+          <text>p_8</text>
+        </name>
+      </place>
+      <place id="p_9">
+        <name>
+          <text>p_9</text>
+        </name>
+      </place>
+      <place id="p_10">
+        <name>
+          <text>p_10</text>
+        </name>
+      </place>
+      <place id="p_15">
+        <name>
+          <text>p_15</text>
+        </name>
+      </place>
+      <transition id="skip_19">
+        <name>
+          <text>skip_19</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4fcdf089-7c89-47ed-a2a0-deb69813d098"/>
+      </transition>
+      <transition id="ba1d6950-f38e-4f5a-ba1f-dd50bf91b2cc">
+        <name>
+          <text>מכרז פנימי לפרסום</text>
+        </name>
+      </transition>
+      <transition id="05ac80c4-cbfb-4d05-9967-a671beb5277b">
+        <name>
+          <text>אישור נוסח מכרז ע"י מנהל היחידה המבקשת (אגף)</text>
+        </name>
+      </transition>
+      <transition id="6e20d765-cf50-47d1-b69f-fa077b59239c">
+        <name>
+          <text>אישור נוסח מודעת דרושים ע"י מנהל היחידה המבקשת (אגף)</text>
+        </name>
+      </transition>
+      <transition id="4185878f-4c0e-46e7-850c-a7452b41f015">
+        <name>
+          <text>אישור מנהל אגף</text>
+        </name>
+      </transition>
+      <transition id="2bc496a1-20d1-4b2b-8bc4-995c95ae2726">
+        <name>
+          <text>ניוד העובד לתפקיד</text>
+        </name>
+      </transition>
+      <transition id="dec9d89a-a60c-472a-ab2a-5f13444c32b6">
+        <name>
+          <text>אישור שליחת כתב זכיה בדוא"ל</text>
+        </name>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="cf60c03b-158b-4829-bcaf-929bb8499ace"/>
+      </transition>
+      <transition id="skip_4">
+        <name>
+          <text>skip_4</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9cbd6f30-81a0-4480-bf3c-ac1e3a560938"/>
+      </transition>
+      <transition id="tauSplit_5">
+        <name>
+          <text>tauSplit_5</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b13ef368-368e-48e3-b01f-ef06c859bb3b"/>
+      </transition>
+      <transition id="init_loop_8">
+        <name>
+          <text>init_loop_8</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3f1b0cbb-f691-4f97-a103-cf7da428c1f5"/>
+      </transition>
+      <transition id="a3a21c0f-df89-46be-a318-77508d1713de">
+        <name>
+          <text>אישור סיום נוסח מכרז</text>
+        </name>
+      </transition>
+      <transition id="6247a58f-94ac-4627-8d5c-0eee96db973e">
+        <name>
+          <text>החלטת גיוס גזבר</text>
+        </name>
+      </transition>
+      <transition id="61f67238-88f2-405e-879f-a680bd8b3aea">
+        <name>
+          <text>בדיקת התכנות תשלום שכר עידוד</text>
+        </name>
+      </transition>
+      <transition id="cf21cfc8-c472-464c-a6d5-0de47c7a6e83">
+        <name>
+          <text>החלטת מנכ"ל - גיוס</text>
+        </name>
+      </transition>
+      <transition id="skip_12">
+        <name>
+          <text>skip_12</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e79fceb0-4825-487f-ada8-5b683cdacc2c"/>
+      </transition>
+      <transition id="04a7d4ce-17c2-4e8a-999f-f44921c4e928">
+        <name>
+          <text>חוזה נחתם ע"י כל הגורמים</text>
+        </name>
+      </transition>
+      <transition id="3c27e5cd-c4e3-414d-a675-5e9e75fb3ae9">
+        <name>
+          <text>אישור יידוע נוסח המכרז נציג ועד העובדים</text>
+        </name>
+      </transition>
+      <transition id="82f7a8c1-0b2d-417a-85cb-d3a7d5cd6685">
+        <name>
+          <text>אישור פרסום מכרז חיצוני</text>
+        </name>
+      </transition>
+      <transition id="26852ab2-a172-4e05-ac0d-d01926e7b6a1">
+        <name>
+          <text>אישור הכנת מפרט- דרושים פטור ממכרז</text>
+        </name>
+      </transition>
+      <transition id="263d1dd4-185d-4e09-bd6b-1f2658012a3c">
+        <name>
+          <text>המלצת איוש ואופן גיוס</text>
+        </name>
+      </transition>
+      <transition id="fad52ebf-04b9-4188-a4f2-2ddd20bd0c33">
+        <name>
+          <text>אישור ראש מינהל</text>
+        </name>
+      </transition>
+      <transition id="42c5ec98-c158-41c7-8b19-ed740b4e4e0b">
+        <name>
+          <text>החלטת הועדה - התאמת מועמדים - ללא מכרז</text>
+        </name>
+      </transition>
+      <transition id="b69e5a64-049e-4ba5-8b1e-7c30122a8902">
+        <name>
+          <text>תכנון - בקרת כ"א</text>
+        </name>
+      </transition>
+      <transition id="skip_18">
+        <name>
+          <text>skip_18</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="13f1030d-ba1f-4bf4-ab74-4596e71ae384"/>
+      </transition>
+      <transition id="42976d0a-7291-46f9-a575-9b5c7b314ebb">
+        <name>
+          <text>חוזה בכירים נחתם ע"י כל הגורמים</text>
+        </name>
+      </transition>
+      <transition id="a56e7387-f0b5-461c-8808-2bcbc0a1d2f9">
+        <name>
+          <text>אישור נוסח מודעת דרושים ע"י מנהל היחידה המבקשת (מינהל)</text>
+        </name>
+      </transition>
+      <transition id="04f2357a-01d9-488c-af69-21d1b37e3259">
+        <name>
+          <text>מידע תכנוני</text>
+        </name>
+      </transition>
+      <transition id="skip_16">
+        <name>
+          <text>skip_16</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="43360743-6111-4326-9e47-585614a37162"/>
+      </transition>
+      <transition id="583e2037-287f-4070-a7a6-3464a6cff461">
+        <name>
+          <text>פרסום מודעת דרושים</text>
+        </name>
+      </transition>
+      <transition id="5e1cbdab-59fe-4a1b-83ae-328598c10776">
+        <name>
+          <text>אישור טיפול במינוי קרובי משפחה</text>
+        </name>
+      </transition>
+      <transition id="5f0e08c2-01d1-4a96-a728-0514bf61980f">
+        <name>
+          <text>אישור מיון וסינון מועמדים</text>
+        </name>
+      </transition>
+      <transition id="d94c0e42-562d-4671-abef-9b35d42f3f84">
+        <name>
+          <text>נתוני תנאי שרות להדמייה</text>
+        </name>
+      </transition>
+      <transition id="init_loop_14">
+        <name>
+          <text>init_loop_14</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b30fe812-8ef0-4a8f-bb42-90c1aebfede4"/>
+      </transition>
+      <transition id="skip_11">
+        <name>
+          <text>skip_11</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9fa66fdb-94c2-4b2b-af32-b789a5045c9c"/>
+      </transition>
+      <transition id="skip_13">
+        <name>
+          <text>skip_13</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b90aeac0-fd71-4e76-8d35-c2c2534cfd24"/>
+      </transition>
+      <transition id="skip_3">
+        <name>
+          <text>skip_3</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fceac392-09b1-4949-9b5d-38fb7d033d88"/>
+      </transition>
+      <transition id="983fd823-98a8-4346-9432-a2e689c69751">
+        <name>
+          <text>החלטת לשכת ראש העיר</text>
+        </name>
+      </transition>
+      <transition id="7a476c2b-ac1f-486e-a38f-f3dd62aed43c">
+        <name>
+          <text>אישור גיוס - החלטת הועדה</text>
+        </name>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b1d2a192-2cdb-4538-bdfd-747a1107a9b1"/>
+      </transition>
+      <transition id="18dd7326-545c-483a-983d-331d5ca727b2">
+        <name>
+          <text>Unknown Stage</text>
+        </name>
+      </transition>
+      <transition id="tauJoin_6">
+        <name>
+          <text>tauJoin_6</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="bf732c20-e3e4-4f5a-8b0e-e2aeb01d69e3"/>
+      </transition>
+      <transition id="skip_7">
+        <name>
+          <text>skip_7</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fc68db7f-439b-4b97-9bbd-3adb0b64591d"/>
+      </transition>
+      <transition id="45b9c5a4-6464-415f-b75d-46de7b97552c">
+        <name>
+          <text>דיווח בדיקת התאמה</text>
+        </name>
+      </transition>
+      <transition id="dd20faac-6d6e-4b65-8134-3e8f4f7ab672">
+        <name>
+          <text>אישור נוסח מכרז ע"י מנהל היחידה המבקשת (מינהל)</text>
+        </name>
+      </transition>
+      <transition id="d1e3382f-535f-49ad-b339-927b5f047a3c">
+        <name>
+          <text>אישור קביעת מועד ועדה עבור הליך גיוס - מכרז</text>
+        </name>
+      </transition>
+      <transition id="aaea4683-af8c-4525-92cd-35d3451be146">
+        <name>
+          <text>אישור מנהל מחלקה</text>
+        </name>
+      </transition>
+      <transition id="38951aeb-50fb-41f0-98e9-c9dd14a85ab2">
+        <name>
+          <text>אישור שליחת כתב זכיה בדוא"ל - מלבד רמ"ד</text>
+        </name>
+      </transition>
+      <transition id="148da550-1835-4319-b31b-1ad26d8345eb">
+        <name>
+          <text>המלצת תקציב לגיוס</text>
+        </name>
+      </transition>
+      <transition id="0d5fbe68-4ca2-4841-8145-1ee48bfe73f5">
+        <name>
+          <text>החלטת ועדת מכרזים (מכרז חיצוני + פנימי)</text>
+        </name>
+      </transition>
+      <transition id="2a546a12-7a87-41cd-9177-dd45741eddf3">
+        <name>
+          <text>אישור טיפול במינוי קרובי משפחה - מלבד רמ"ד</text>
+        </name>
+      </transition>
+      <transition id="21ff7b17-3c3a-4d7a-86f1-8d40602c56a5">
+        <name>
+          <text>החלטת ועדת מכרזים - התאמת מועמדים (מכרז פנימי) - מלבד רמ"ד</text>
+        </name>
+      </transition>
+      <transition id="c08ed51e-821a-44cf-b40b-5ae245e2947b">
+        <name>
+          <text>אישור הכנת מפרט + פרסום</text>
+        </name>
+      </transition>
+      <transition id="skip_10">
+        <name>
+          <text>skip_10</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="eecc8e39-2653-4915-99b1-1d6b88fd81af"/>
+      </transition>
+      <transition id="skip_17">
+        <name>
+          <text>skip_17</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="13ce0c36-3f26-4c59-a423-5bf30294402e"/>
+      </transition>
+      <transition id="6ea1231c-210e-472c-88f8-e3b90823cddf">
+        <name>
+          <text>אישור הכנת מפרט למודעת דרושים</text>
+        </name>
+      </transition>
+      <transition id="6d9da3b8-04b6-460e-a5e4-7d8751b5e717">
+        <name>
+          <text>דיווח הדמיית שכר</text>
+        </name>
+      </transition>
+      <transition id="18b4d16b-9e45-424c-9ce2-2fe5692100a0">
+        <name>
+          <text>מינוי מועמד לפי בחירת ועדת מכרזים</text>
+        </name>
+      </transition>
+      <transition id="74dd70b2-e668-4efd-aae2-740c6657cd48">
+        <name>
+          <text>המלצת גיוס של אגף משאבי אנוש</text>
+        </name>
+      </transition>
+      <arc id="2206981353296" source="p_16" target="skip_17"/>
+      <arc id="2206976378384" source="skip_11" target="p_8"/>
+      <arc id="2206976375312" source="p_7" target="init_loop_8"/>
+      <arc id="2206994606096" source="p_15" target="04a7d4ce-17c2-4e8a-999f-f44921c4e928"/>
+      <arc id="2206999558672" source="p_15" target="a3a21c0f-df89-46be-a318-77508d1713de"/>
+      <arc id="2206999546896" source="p_15" target="21ff7b17-3c3a-4d7a-86f1-8d40602c56a5"/>
+      <arc id="2206994603024" source="38951aeb-50fb-41f0-98e9-c9dd14a85ab2" target="p_16"/>
+      <arc id="2206999551504" source="p_12" target="init_loop_14"/>
+      <arc id="2206999547408" source="p_15" target="ba1d6950-f38e-4f5a-ba1f-dd50bf91b2cc"/>
+      <arc id="2206994599440" source="p_15" target="38951aeb-50fb-41f0-98e9-c9dd14a85ab2"/>
+      <arc id="2206994605072" source="6d9da3b8-04b6-460e-a5e4-7d8751b5e717" target="p_16"/>
+      <arc id="2206994610192" source="p_15" target="26852ab2-a172-4e05-ac0d-d01926e7b6a1"/>
+      <arc id="2206994602768" source="2a546a12-7a87-41cd-9177-dd45741eddf3" target="p_16"/>
+      <arc id="2206994611728" source="p_15" target="c08ed51e-821a-44cf-b40b-5ae245e2947b"/>
+      <arc id="2206981355344" source="p_15" target="d94c0e42-562d-4671-abef-9b35d42f3f84"/>
+      <arc id="2206976360528" source="p_3" target="18dd7326-545c-483a-983d-331d5ca727b2"/>
+      <arc id="2206994604624" source="263d1dd4-185d-4e09-bd6b-1f2658012a3c" target="p_16"/>
+      <arc id="2206994596944" source="p_15" target="3c27e5cd-c4e3-414d-a675-5e9e75fb3ae9"/>
+      <arc id="2206999545936" source="6ea1231c-210e-472c-88f8-e3b90823cddf" target="p_16"/>
+      <arc id="2206994605648" source="p_15" target="583e2037-287f-4070-a7a6-3464a6cff461"/>
+      <arc id="2206980566096" source="tau_1" target="p_3"/>
+      <arc id="2206976373328" source="7a476c2b-ac1f-486e-a38f-f3dd62aed43c" target="p_4"/>
+      <arc id="2206976365648" source="p_3" target="983fd823-98a8-4346-9432-a2e689c69751"/>
+      <arc id="2206976362576" source="skip_4" target="p_6"/>
+      <arc id="2206999546064" source="p_15" target="6247a58f-94ac-4627-8d5c-0eee96db973e"/>
+      <arc id="2206994600336" source="p_15" target="2a546a12-7a87-41cd-9177-dd45741eddf3"/>
+      <arc id="2206994608784" source="p_15" target="04f2357a-01d9-488c-af69-21d1b37e3259"/>
+      <arc id="2206981354640" source="dd20faac-6d6e-4b65-8134-3e8f4f7ab672" target="p_16"/>
+      <arc id="2206994601360" source="p_15" target="42c5ec98-c158-41c7-8b19-ed740b4e4e0b"/>
+      <arc id="2206999545488" source="p_15" target="6ea1231c-210e-472c-88f8-e3b90823cddf"/>
+      <arc id="2206999553680" source="82f7a8c1-0b2d-417a-85cb-d3a7d5cd6685" target="p_16"/>
+      <arc id="2206976368784" source="tau_2" target="sink"/>
+      <arc id="2206976369808" source="p_9" target="dec9d89a-a60c-472a-ab2a-5f13444c32b6"/>
+      <arc id="2206999550608" source="skip_13" target="p_14"/>
+      <arc id="2206999552144" source="init_loop_14" target="p_15"/>
+      <arc id="2206999548560" source="p_15" target="45b9c5a4-6464-415f-b75d-46de7b97552c"/>
+      <arc id="2206999549072" source="tauSplit_5" target="p_12"/>
+      <arc id="2206994605200" source="p_15" target="6d9da3b8-04b6-460e-a5e4-7d8751b5e717"/>
+      <arc id="2206994597008" source="aaea4683-af8c-4525-92cd-35d3451be146" target="p_16"/>
+      <arc id="2206981346000" source="p_15" target="6e20d765-cf50-47d1-b69f-fa077b59239c"/>
+      <arc id="2207000335056" source="p_6" target="skip_19"/>
+      <arc id="2206981348240" source="d1e3382f-535f-49ad-b339-927b5f047a3c" target="p_16"/>
+      <arc id="2207000345744" source="skip_10" target="p_9"/>
+      <arc id="2207000337808" source="p_6" target="2bc496a1-20d1-4b2b-8bc4-995c95ae2726"/>
+      <arc id="2206981354960" source="skip_17" target="p_14"/>
+      <arc id="2206976368848" source="dec9d89a-a60c-472a-ab2a-5f13444c32b6" target="p_10"/>
+      <arc id="2206994604240" source="p_15" target="aaea4683-af8c-4525-92cd-35d3451be146"/>
+      <arc id="2206999548624" source="45b9c5a4-6464-415f-b75d-46de7b97552c" target="p_16"/>
+      <arc id="2206994604752" source="p_15" target="263d1dd4-185d-4e09-bd6b-1f2658012a3c"/>
+      <arc id="2206999553744" source="p_12" target="skip_12"/>
+      <arc id="2206976374992" source="p_7" target="skip_7"/>
+      <arc id="2206976362704" source="p_5" target="skip_4"/>
+      <arc id="2206976375504" source="p_3" target="7a476c2b-ac1f-486e-a38f-f3dd62aed43c"/>
+      <arc id="2206978772688" source="p_4" target="tau_2"/>
+      <arc id="2206976361680" source="skip_3" target="p_5"/>
+      <arc id="2206976371280" source="skip_7" target="p_8"/>
+      <arc id="2206999550672" source="5f0e08c2-01d1-4a96-a728-0514bf61980f" target="p_16"/>
+      <arc id="2206994600976" source="148da550-1835-4319-b31b-1ad26d8345eb" target="p_16"/>
+      <arc id="2206981346832" source="5e1cbdab-59fe-4a1b-83ae-328598c10776" target="p_16"/>
+      <arc id="2206981345104" source="p_15" target="05ac80c4-cbfb-4d05-9967-a671beb5277b"/>
+      <arc id="2206977789776" source="skip_18" target="p_13"/>
+      <arc id="2206980566288" source="source" target="tau_1"/>
+      <arc id="2206976373520" source="983fd823-98a8-4346-9432-a2e689c69751" target="p_4"/>
+      <arc id="2206976366864" source="p_8" target="tauJoin_6"/>
+      <arc id="2206999546640" source="21ff7b17-3c3a-4d7a-86f1-8d40602c56a5" target="p_16"/>
+      <arc id="2206994606864" source="b69e5a64-049e-4ba5-8b1e-7c30122a8902" target="p_16"/>
+      <arc id="2206999547152" source="6247a58f-94ac-4627-8d5c-0eee96db973e" target="p_16"/>
+      <arc id="2206994599184" source="p_15" target="fad52ebf-04b9-4188-a4f2-2ddd20bd0c33"/>
+      <arc id="2206999547664" source="a3a21c0f-df89-46be-a318-77508d1713de" target="p_16"/>
+      <arc id="2206999549968" source="p_12" target="skip_13"/>
+      <arc id="2206994603792" source="42c5ec98-c158-41c7-8b19-ed740b4e4e0b" target="p_16"/>
+      <arc id="2206981347856" source="05ac80c4-cbfb-4d05-9967-a671beb5277b" target="p_16"/>
+      <arc id="2206994608720" source="a56e7387-f0b5-461c-8808-2bcbc0a1d2f9" target="p_16"/>
+      <arc id="2206980600400" source="p_14" target="skip_18"/>
+      <arc id="2206981356304" source="p_15" target="d1e3382f-535f-49ad-b339-927b5f047a3c"/>
+      <arc id="2206994600784" source="4185878f-4c0e-46e7-850c-a7452b41f015" target="p_16"/>
+      <arc id="2207000341904" source="42976d0a-7291-46f9-a575-9b5c7b314ebb" target="p_4"/>
+      <arc id="2207000344144" source="skip_19" target="p_4"/>
+      <arc id="2206977791824" source="18b4d16b-9e45-424c-9ce2-2fe5692100a0" target="p_13"/>
+      <arc id="2206976364880" source="init_loop_8" target="p_9"/>
+      <arc id="2206976373072" source="p_10" target="skip_10"/>
+      <arc id="2206999544656" source="61f67238-88f2-405e-879f-a680bd8b3aea" target="p_16"/>
+      <arc id="2206994596688" source="3c27e5cd-c4e3-414d-a675-5e9e75fb3ae9" target="p_16"/>
+      <arc id="2206999555408" source="p_15" target="82f7a8c1-0b2d-417a-85cb-d3a7d5cd6685"/>
+      <arc id="2206976363344" source="tauSplit_5" target="p_7"/>
+      <arc id="2206976366416" source="p_3" target="skip_3"/>
+      <arc id="2206999546192" source="p_15" target="61f67238-88f2-405e-879f-a680bd8b3aea"/>
+      <arc id="2206994606416" source="0d5fbe68-4ca2-4841-8145-1ee48bfe73f5" target="p_16"/>
+      <arc id="2206999547216" source="ba1d6950-f38e-4f5a-ba1f-dd50bf91b2cc" target="p_16"/>
+      <arc id="2206981356112" source="p_15" target="5e1cbdab-59fe-4a1b-83ae-328598c10776"/>
+      <arc id="2206981348176" source="p_15" target="dd20faac-6d6e-4b65-8134-3e8f4f7ab672"/>
+      <arc id="2206994609040" source="74dd70b2-e668-4efd-aae2-740c6657cd48" target="p_16"/>
+      <arc id="2206999612368" source="26852ab2-a172-4e05-ac0d-d01926e7b6a1" target="p_16"/>
+      <arc id="2207000336016" source="p_6" target="42976d0a-7291-46f9-a575-9b5c7b314ebb"/>
+      <arc id="2206994605968" source="04a7d4ce-17c2-4e8a-999f-f44921c4e928" target="p_16"/>
+      <arc id="2206976360848" source="tauJoin_6" target="p_6"/>
+      <arc id="2206976373648" source="p_5" target="tauSplit_5"/>
+      <arc id="2206976361872" source="18dd7326-545c-483a-983d-331d5ca727b2" target="p_5"/>
+      <arc id="2206976379280" source="p_10" target="skip_11"/>
+      <arc id="2206999554960" source="p_15" target="cf21cfc8-c472-464c-a6d5-0de47c7a6e83"/>
+      <arc id="2206994606992" source="p_15" target="b69e5a64-049e-4ba5-8b1e-7c30122a8902"/>
+      <arc id="2206999544208" source="cf21cfc8-c472-464c-a6d5-0de47c7a6e83" target="p_16"/>
+      <arc id="2206994599312" source="fad52ebf-04b9-4188-a4f2-2ddd20bd0c33" target="p_16"/>
+      <arc id="2206994600848" source="p_15" target="4185878f-4c0e-46e7-850c-a7452b41f015"/>
+      <arc id="2206981349712" source="6e20d765-cf50-47d1-b69f-fa077b59239c" target="p_16"/>
+      <arc id="2206977788688" source="p_14" target="18b4d16b-9e45-424c-9ce2-2fe5692100a0"/>
+      <arc id="2206994611600" source="c08ed51e-821a-44cf-b40b-5ae245e2947b" target="p_16"/>
+      <arc id="2207000335824" source="2bc496a1-20d1-4b2b-8bc4-995c95ae2726" target="p_4"/>
+      <arc id="2206981351248" source="d94c0e42-562d-4671-abef-9b35d42f3f84" target="p_16"/>
+      <arc id="2206999559632" source="p_15" target="5f0e08c2-01d1-4a96-a728-0514bf61980f"/>
+      <arc id="2206994605520" source="583e2037-287f-4070-a7a6-3464a6cff461" target="p_16"/>
+      <arc id="2206999554512" source="p_13" target="tauJoin_6"/>
+      <arc id="2206994606544" source="p_15" target="0d5fbe68-4ca2-4841-8145-1ee48bfe73f5"/>
+      <arc id="2207000336336" source="skip_16" target="p_15"/>
+      <arc id="2206999551440" source="skip_12" target="p_13"/>
+      <arc id="2206994597840" source="p_15" target="148da550-1835-4319-b31b-1ad26d8345eb"/>
+      <arc id="2206994611664" source="p_15" target="74dd70b2-e668-4efd-aae2-740c6657cd48"/>
+      <arc id="2206994610896" source="04f2357a-01d9-488c-af69-21d1b37e3259" target="p_16"/>
+      <arc id="2206994607440" source="p_15" target="a56e7387-f0b5-461c-8808-2bcbc0a1d2f9"/>
+      <arc id="2206981348816" source="p_16" target="skip_16"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

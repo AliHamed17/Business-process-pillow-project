@@ -45,6 +45,22 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+import sys, re
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    from plot_utils import apply_rtl_text, fix_hebrew, set_plot_style, truncate_label
+except ImportError:
+    def fix_hebrew(t): return str(t)
+    def truncate_label(t, max_len=40): return str(t)
+    def apply_rtl_text(ax, *, title=None, xlabel=None, ylabel=None):
+        if title is not None:
+            ax.set_title(str(title))
+        if xlabel is not None:
+            ax.set_xlabel(str(xlabel))
+        if ylabel is not None:
+            ax.set_ylabel(str(ylabel))
+    def set_plot_style(): return None
+
 warnings.filterwarnings('ignore')
 
 
@@ -256,6 +272,7 @@ def train_and_evaluate(logfile_path: str, output_dir: str) -> dict:
     # ---------------------------------------------------------------------------
     plots_dir = os.path.join(output_dir, "plots")
     os.makedirs(plots_dir, exist_ok=True)
+    set_plot_style()
 
     # Feature Importance Bar Chart
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
@@ -265,9 +282,8 @@ def train_and_evaluate(logfile_path: str, output_dir: str) -> dict:
         ['Random Forest Feature Importance', 'XGBoost Feature Importance']
     ):
         sorted_df = rf_importances.sort_values(col, ascending=True)
-        ax.barh(sorted_df['Feature'], sorted_df[col], color='steelblue')
-        ax.set_title(title)
-        ax.set_xlabel('Importance Score')
+        ax.barh([truncate_label(x, 28) for x in sorted_df['Feature']], sorted_df[col], color='steelblue')
+        apply_rtl_text(ax, title=title, xlabel='Importance Score')
         ax.tick_params(axis='y', labelsize=9)
 
     plt.tight_layout()
@@ -281,7 +297,7 @@ def train_and_evaluate(logfile_path: str, output_dir: str) -> dict:
     cm = confusion_matrix(y_test, rf_pred)
     disp = ConfusionMatrixDisplay(cm, display_labels=['Cancelled/Rejected', 'Approved'])
     disp.plot(ax=ax, colorbar=False)
-    ax.set_title('Random Forest – Confusion Matrix')
+    apply_rtl_text(ax, title='Random Forest Confusion Matrix')
     plt.tight_layout()
     cm_plot = os.path.join(plots_dir, "confusion_matrix_rf.png")
     plt.savefig(cm_plot, dpi=150, bbox_inches='tight')
@@ -303,9 +319,8 @@ def train_and_evaluate(logfile_path: str, output_dir: str) -> dict:
     # Top 15 departments by cancellation rate (bar chart)
     top15 = dept_cancel.head(15)
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.barh(top15['department'], top15['cancel_rate'] * 100, color='tomato')
-    ax.set_xlabel('Cancellation Rate (%)')
-    ax.set_title('Top 15 Departments by Cancellation Rate')
+    ax.barh([truncate_label(str(x), 30) for x in top15['department']], top15['cancel_rate'] * 100, color='tomato')
+    apply_rtl_text(ax, title='Top 15 Departments by Cancellation Rate', xlabel='Cancellation Rate (%)')
     ax.invert_yaxis()
     plt.tight_layout()
     dept_plot = os.path.join(plots_dir, "dept_cancellation_rate.png")
@@ -352,3 +367,4 @@ if __name__ == "__main__":
     print("\nTop Feature by Importance (RF):")
     for fi in results['top_rf_features'][:3]:
         print(f"  {fi['Feature']}: {fi['RF_Importance']:.4f}")
+

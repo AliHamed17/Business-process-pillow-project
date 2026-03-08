@@ -1,8 +1,8 @@
 {
-  "rf_test_auc": 0.9173,
-  "rf_cv_auc": 0.9055,
-  "xgb_test_auc": 0.9223,
-  "xgb_cv_auc": 0.9069,
+  "rf_test_auc": 0.9404,
+  "rf_cv_auc": 0.9278,
+  "xgb_test_auc": 0.9433,
+  "xgb_cv_auc": 0.9292,
   "n_train": 643,
   "n_test": 161,
   "class_balance": {
@@ -12,39 +12,39 @@
   "top_rf_features": [
     {
       "Feature": "Unique Stages",
-      "RF_Importance": 0.331012048897913
+      "RF_Importance": 0.2493282906231875
     },
     {
       "Feature": "Stage Responsible",
-      "RF_Importance": 0.14787725204586172
+      "RF_Importance": 0.17784068105722353
     },
     {
       "Feature": "Total Events",
-      "RF_Importance": 0.1399216044098489
+      "RF_Importance": 0.1704099371195917
     },
     {
       "Feature": "Cycle Time (days)",
-      "RF_Importance": 0.11871130149981117
+      "RF_Importance": 0.1484139809041689
     },
     {
       "Feature": "Initial Wait (days)",
-      "RF_Importance": 0.0921385964367613
+      "RF_Importance": 0.09996762688688066
     },
     {
       "Feature": "Department",
-      "RF_Importance": 0.08462014519429856
+      "RF_Importance": 0.09594520265389471
     },
     {
       "Feature": "Has CEO Stage",
-      "RF_Importance": 0.058708757649210026
+      "RF_Importance": 0.03718589325551526
     },
     {
       "Feature": "Has Budget Stage",
-      "RF_Importance": 0.022745713347804498
+      "RF_Importance": 0.01867759792253173
     },
     {
       "Feature": "Position Type",
-      "RF_Importance": 0.00426458051849079
+      "RF_Importance": 0.002230789577005957
     }
   ],
   "top_dept_by_cancellation": [

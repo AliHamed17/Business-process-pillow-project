@@ -1,0 +1,219 @@
+
+Process Mining the Haifa Municipality
+Recruitment Process
+Final Academic Submission
+2024 Event Log Analysis  |  11,922 Cases  |  1.1M Events
+
+Table of Contents
+
+1. Executive Summary
+This study applies process mining techniques to the Haifa Municipality’s job-staffing workflow (Teken — איוש משרה) with the objective of identifying delay sources, mapping process variants, and formulating concrete operational recommendations to improve recruitment cycle times.
+Dataset: Two event logs totalling 1,126,436 raw events across 11,922 unique cases, covering 12 months (2024). After preprocessing, the cleaned log retained 1,040,445 events.
+Key Findings:
+The cycle-time distribution is heavily right-skewed: median = 1.2 days, P95 = 116.6 days.
+Top bottleneck stages: CEO Decision (max 134 days), Budget Recommendation (max 121 days), Staffing Recommendation (max 106 days).
+The slowest variant path (mean 317 days) involves the full external-tender track following CEO approval.
+Workload volume does not explain delays: Pearson r = 0.057 (no significant correlation).
+Random Forest predictive model (AUC = 0.917): unique stages visited is the #1 predictor of cancellation.
+Process fitness via token-based replay: 93.92% of traces fully conform to the discovered model.
+Operational Recommendations:
+7-day SLA on Budget Recommendation (highest single-stage delay impact).
+Automate committee scheduling (highest internal complexity stage).
+Mandatory intake checklist to prevent early-stage abandonment.
+14-day inactivity auto-escalation trigger.
+Parallelise salary simulation with Division Head approval.
+10-day SLA routing queue for CEO/Mayor decisions.
+
+2. Introduction
+2.1 Process Description
+The Haifa Municipality manages employee recruitment through a rule-based workflow system. Each recruitment cycle is initiated when a department submits a Position Standard request (Teken) — either for an existing budgeted position (96.6% of cases) or a new position (3.4%). The process proceeds through five logical phases.
+Phase 1 — Hierarchical Approval. The request is routed sequentially through the Department Manager, Division Head (Agaf), and Head of Administration (HR Director). The system may skip a level if no relevant manager exists.
+Phase 2 — HR Control and Recruitment Strategy. The HR department reviews the staffing situation. The Recruitment Manager recommends the hiring method: Internal Tender, External Tender, or Help-Wanted Advertisement (for junior positions).
+Phase 3 — Financial and Executive Oversight. Three parallel workstreams operate concurrently: (a) Budget/Treasurer approval, (b) Service Conditions salary verification, and (c) Payroll salary simulation. This phase culminates in the CEO Decision.
+Phase 4 — Implementation. The Standards Department drafts the job description. The Labour Union approves the tender wording, and the Recruitment Department publishes the tender.
+Phase 5 — Selection. A committee convenes to make the hiring decision. Certain time windows (e.g., application submission period) are mandated by law and cannot be compressed.
+2.2 Study Objectives
+This study addresses six business questions posed by the Haifa Municipality:
+Where do delays occur — by stage, role, user, department, and outcome?
+What are the main process variants, and which activity sequences produce the longest delays?
+What is the relationship between departmental workload volume and cycle time?
+Do changes in stage ownership correlate with delays?
+Can internal sub-processes within individual stages be characterised and linked to delays?
+What concrete operational suggestions can reduce process duration?
+Data Scope: Two Excel log files covering 12 months (2024), 1,126,436 raw events, 11,922 unique cases.
+
+3. Data Preprocessing
+3.1 Source Data and Merging
+Two Excel files were provided: Part 1 (495,840 rows / 5,097 cases) and Part 2 (630,596 rows / 7,501 cases). These were concatenated into a single DataFrame of 1,126,436 rows. Each row represents a single system event with 17 fields including case identifier, activity, timestamp, performer, responsible party, requesting department, and changed field.
+3.2 Cleaning Pipeline
+
+
+Figure 1. Deduplication impact: raw (1,126,436) vs. cleaned (1,040,445) event count
+
+Figure 2. Case outcome distribution: Approved (422), Cancelled (360), Rejected (22), In-Progress (21)
+
+Figure 3. Events-per-case distribution. Median = 51; P95 = 301
+
+Figure 4. Monthly event volume confirming full 12-month coverage
+
+Figure 5. Top 20 stages by event count
+
+Figure 6. Missing-value analysis by column
+3.3 Modelling Decisions
+Activity Definition: Hebrew stage name. Concatenating with event type adds noise — delays occur between stage transitions, not within event-type sub-steps.
+Case Identifier: request_id (maps 1:1 to case_id).
+Encoding: UTF-8-SIG to preserve Hebrew characters across Windows.
+
+4. Main Paths and Variants
+4.1 Case Characterisation
+By Position Standard:
+
+By Outcome:
+
+The near-parity between approved and cancelled cases (52.5% vs. 44.8%) indicates significant process waste.
+4.2 Process Discovery
+The Heuristics Miner (dependency threshold = 0.5, 10% edge filter) retained 21 of 260 raw edges.
+Main path: Staffing Rec → Dept Manager → Division Head → HR Director → [PARALLEL] Budget + Salary + Service → CEO Decision → Tender Spec + Publication → Committee Date → Committee Decision
+
+Figure 7. Filtered Directly-Follows Graph (21 edges, ≥10% of max frequency)
+
+Figure 8. Full DFG with frequency-based edge weights
+
+Figure 9. Variant treemap showing process path distribution
+
+Figure 10. Top 15 variants by frequency
+4.3 Sequences with Longest Delays
+
+All five slowest paths traverse the post-CEO tender-to-committee corridor (270–317 days mean vs. 18.5 days overall).
+
+5. Analyses Performed
+5.1 Business Question 1: Where Do Delays Occur?
+Goal: Identify bottleneck locations by stage, role, user, department, and outcome.
+Methodology: Inter-event wait times and sojourn times (van der Aalst, 2016) aggregated by multiple dimensions. Mann-Whitney U tests for significance.
+5.1.1 Bottlenecks by Stage
+
+Budget Recommendation and CEO Decision exhibit near-zero medians but maximums exceeding 340 days — right-skewed “time bomb” stages that are fast for the majority but catastrophically slow for a minority.
+
+Figure 11. Top 10 stages by mean wait time (days)
+
+Figure 12. Wait-time box-plot distribution across major stages
+
+Figure 13. Top 10 stages by mean sojourn time (dwell time)
+
+Figure 14. Median vs. P90 sojourn time — stages with low median but high P90 are SLA targets
+
+Figure 15. Overall sojourn-time distribution
+5.1.2 Bottlenecks by Role and User
+Mayor’s Staff (סגל ראש העיר) exhibits the longest average stage duration. HR Division Head ranks second. A group of 5–7 individual users (Mayor’s Office + Budget Dept) account for the majority of P95+ delays, creating single-point-of-failure risk.
+
+Figure 16. Stage-by-role bottleneck heatmap (darker = longer delays)
+5.1.3 Bottlenecks by Department and Outcome
+
+Figure 17. Cycle time violin plots by requesting department
+
+Figure 18. Cancellation rate by requesting department
+
+Figure 19. Cycle time distribution by process outcome
+Approved cases average 146.6 days vs. 101.1 for cancelled — delays reside in post-CEO implementation stages, not the approval chain.
+5.1.4 Cycle Time Distribution and Statistical Tests
+
+
+Figure 20. Case cycle-time distribution (heavily right-skewed)
+Statistical significance (Mann-Whitney U):
+
+5.2 Business Question 2: Main Variants and Delay Sequences
+Goal: Map principal variants; identify delay-producing sequences.
+Methodology: Three discovery algorithms; two-layer conformance checking.
+5.2.1 Multi-Algorithm Process Discovery
+
+The Inductive Miner (Leemans et al., 2014) achieves perfect fitness. Alpha Miner fails entirely (0%), demonstrating why robust algorithms are required for noisy administrative logs.
+5.2.2 Conformance Checking
+Layer 1 — Token-Based Replay: Global fitness = 93.92% (11,197/11,922 traces conform).
+Layer 2 — Normative Checkpoint Coverage: Per-case checkpoint coverage across 7 critical stages.
+
+Figure 21. Activity transition heatmap (top 12 activities)
+
+Figure 22. SNA handover-of-work graph
+
+Figure 23. SNA working-together graph
+
+5.3 Business Question 3: Workload Volume vs. Cycle Time
+Goal: Determine whether departmental workload correlates with cycle time.
+Result: Pearson r = 0.057 (p > 0.05). No significant correlation.
+Interpretation: Delays are structural, not volumetric. They concentrate at specific approval gates regardless of departmental load. “Hire more staff” is not the correct intervention — the fix must target the approval stages themselves.
+
+Figure 24. Workload heatmap: concurrent open cases by department and calendar week
+
+Figure 25. Workload trend by department over time
+
+Figure 26. Monthly case-load trend showing Q1 and Q3 seasonal peaks
+
+5.4 Business Question 4: Responsible-Party Changes and Delays
+Goal: Assess whether ownership reassignment correlates with delays.
+
+The paradox (reassigned cases are faster) is explained by a confounding variable: case complexity. Short cases traverse more owners naturally. After controlling for event-count quartiles, the relationship is attenuated. Long-stalling cases remain with a single owner, motivating auto-escalation after 14 days of inactivity.
+
+Figure 27. Cycle time box plots: with vs. without responsible-party reassignment
+
+Figure 28. Controlled comparison of reassignment effect across event-count quartiles
+
+Figure 29. Distribution of responsible-party changes per case
+
+5.5 Business Question 5: Internal Sub-Processes within Stages
+Goal: Characterise intra-stage complexity and its link to delays.
+Committee stages show >150 internal events per case. The most frequently modified field is ‘Standard Time Deviation Level’ (רמת חריגה מזמן תקן) — updated when stages exceed their target duration.
+Parallel-track compliance: 84.97% of cases execute Budget/Salary/Service tracks concurrently as designed. 15% execute sequentially, adding unnecessary delay. Recommendation: auto-trigger salary simulation when Budget Recommendation is initiated.
+
+Figure 30. Top 10 stages by internal rework ratio
+
+Figure 31. Internal rework frequency vs. stage duration
+
+5.6 Additional Analyses
+5.6.1 Predictive Model — Cancellation Probability
+
+Top predictor: Unique Stages Visited (importance = 0.331). Cases cancelled early never reach the Budget stage — indicating early abandonment rather than late-stage rejection.
+
+Figure 32. Random Forest feature importance ranking
+
+Figure 33. Random Forest confusion matrix (test set, n=161)
+5.6.2 Social Network Analysis
+Betweenness centrality identifies critical bridge resources. High-betweenness nodes are system-level bottlenecks whose unavailability halts the process.
+5.6.3 K-Means Case Segmentation
+Four clusters emerged: Fast/Simple (happy path, <5 days), Average (minor friction), Complex/Slow (high rework), and Extreme Outliers (>200 days, pathological loops).
+
+Figure 34. K-Means cluster profiles — Extreme Outlier cases are structurally different, not merely slower
+5.6.4 Temporal Trends
+
+Figure 35. Monthly median + P90 cycle time with linear trend line
+
+Figure 36. Monthly throughput: cases started vs. completed
+
+Figure 37. Dotted chart — event distribution over time
+
+6. Conclusions and Operational Suggestions
+6.1 Key Conclusions
+1. Budgeting is the dominant long-tail risk factor. Max delay = 344 days. Cases never reaching budget are the primary cancellation driver.
+2. Delays are structural, not volumetric. Pearson r = 0.057 between workload and cycle time.
+3. The tender-to-committee corridor is the slowest segment. Mean 270–317 days — 14–17× the overall mean.
+4. Extreme right-skew dominates. P50 = 1.2 days vs. P95 = 116.6 days.
+5. Reassignment is a confounded signal. After controlling for complexity, stalled cases show single-owner stagnation.
+6. Early abandonment drives cancellation. RF AUC = 0.917; cancelled cases never reach budget stage.
+6.2 Operational Recommendations
+
+7. Appendices
+7.1 Code Submission
+The complete analysis pipeline is submitted as a separate code archive comprising 19 sequential modules executed via run_all.py. All outputs are saved to the outputs/ directory.
+7.2 Tools and Libraries
+pm4py (v2.x) — Process mining operations (DFG, Petri net, conformance)
+scikit-learn — Random Forest classifier and K-Means clustering
+XGBoost — Gradient-boosted tree validation model
+NetworkX — Social network analysis and centrality computation
+pandas / NumPy — Data manipulation and statistical computation
+matplotlib / seaborn / Plotly — Visualisation
+7.3 References
+van der Aalst, W. M. P. (2016). Process Mining: Data Science in Action (2nd ed.). Springer.
+van der Aalst, W. M. P., Weijters, A. J. M. M., & Maruster, L. (2004). Workflow mining. IEEE TKDE, 16(9), 1128–1142.
+Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5–32.
+Dumas, M., La Rosa, M., Mendling, J., & Reijers, H. A. (2018). Fundamentals of Business Process Management (2nd ed.). Springer.
+Leemans, S. J. J., Fahland, D., & van der Aalst, W. M. P. (2014). Discovering block-structured process models. In BPM Workshops (pp. 66–78). Springer.
+Weijters, A. J. M. M., & Ribeiro, J. T. S. (2011). Flexible heuristics miner. In Proc. IEEE CIDM (pp. 310–317).

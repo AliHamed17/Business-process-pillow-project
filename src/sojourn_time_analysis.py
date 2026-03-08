@@ -26,10 +26,10 @@ import pandas as pd
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import annotate_bars, finalize_and_save, set_plot_style, truncate_label
+    from plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, set_plot_style, truncate_label
 except ModuleNotFoundError:
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import annotate_bars, finalize_and_save, set_plot_style, truncate_label
+    from .plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, set_plot_style, truncate_label
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
@@ -69,8 +69,7 @@ def _save_sojourn_plots(stage_stats: pd.DataFrame, stage_visits: pd.DataFrame,
         labels = [truncate_label(x, 42) for x in top_stages['activity'].astype(str)]
         ax.barh(labels, top_stages['mean_sojourn_days'], color='#E07B39')
         ax.invert_yaxis()
-        ax.set_title('Top 10 Stages by Mean Sojourn Time')
-        ax.set_xlabel('Mean Sojourn Time (Days)')
+        apply_rtl_text(ax, title='Top 10 Stages by Mean Sojourn Time', xlabel='Mean Sojourn Time (Days)')
         annotate_bars(ax, horizontal=True)
         finalize_and_save(fig, output_dir / 'sojourn_top10_mean.png')
 
@@ -87,8 +86,7 @@ def _save_sojourn_plots(stage_stats: pd.DataFrame, stage_visits: pd.DataFrame,
             fig, ax = plt.subplots(figsize=(11, 6))
             ax.boxplot(grouped, labels=[truncate_label(x, 22) for x in top_names],
                        showfliers=False)
-            ax.set_title('Sojourn Time Distribution by Top Bottleneck Stages')
-            ax.set_ylabel('Sojourn Time (Days)')
+            apply_rtl_text(ax, title='Sojourn Time Distribution by Top Bottleneck Stages', ylabel='Sojourn Time (Days)')
             ax.tick_params(axis='x', rotation=40)
             finalize_and_save(fig, output_dir / 'sojourn_time_distribution.png')
 
@@ -103,8 +101,7 @@ def _save_sojourn_plots(stage_stats: pd.DataFrame, stage_visits: pd.DataFrame,
                label='P90', color='#C44E52')
         ax.set_xticks(list(x))
         ax.set_xticklabels(labels, rotation=40, ha='right', fontsize=8)
-        ax.set_title('Median vs P90 Sojourn Time by Stage')
-        ax.set_ylabel('Sojourn Time (Days)')
+        apply_rtl_text(ax, title='Median vs P90 Sojourn Time by Stage', ylabel='Sojourn Time (Days)')
         ax.legend()
         finalize_and_save(fig, output_dir / 'sojourn_median_vs_p90.png')
 

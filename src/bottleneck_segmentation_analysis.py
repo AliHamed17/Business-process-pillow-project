@@ -6,10 +6,10 @@ import pandas as pd
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import finalize_and_save, set_plot_style
+    from plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, fix_hebrew, set_plot_style, truncate_label
 except ModuleNotFoundError:  # package-import fallback for tests
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import finalize_and_save, set_plot_style
+    from .plot_utils import annotate_bars, apply_rtl_text, finalize_and_save, fix_hebrew, set_plot_style, truncate_label
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
@@ -51,40 +51,63 @@ def _event_wait(df: pd.DataFrame) -> pd.DataFrame:
     return e
 
 
-def _save_segmentation_plots(wait_by_owner: pd.DataFrame, wait_by_performer: pd.DataFrame, outcome_cycle: pd.DataFrame, keyword_wait: pd.DataFrame, output_dir: Path) -> None:
+def _save_segmentation_plots(wait_by_stage: pd.DataFrame, wait_by_owner: pd.DataFrame, wait_by_performer: pd.DataFrame, outcome_cycle: pd.DataFrame, keyword_wait: pd.DataFrame, output_dir: Path) -> None:
     set_plot_style()
+    import numpy as np
+
+    if not wait_by_stage.empty:
+        top_stages = wait_by_stage.head(10).copy()
+        fig, ax1 = plt.subplots(figsize=(10, 6))
+        labels = [truncate_label(x, 25) for x in top_stages['activity'].astype(str)]
+        y_pos = np.arange(len(labels))
+        height = 0.35
+        
+        ax1.barh(y_pos - height/2, top_stages['mean_wait_days'], height, label='Mean Wait Time (Days)', color='#C44E52')
+        ax2 = ax1.twiny()
+        ax2.barh(y_pos + height/2, top_stages['event_count'], height, label='Execution Frequency', color='#4C72B0')
+        
+        ax1.set_yticks(y_pos)
+        ax1.set_yticklabels(labels)
+        ax1.invert_yaxis()
+        
+        apply_rtl_text(ax1, title='Bottleneck Frequency vs. Duration (Top 10 Stages)', xlabel='Wait Time (Days)', ylabel='Stage')
+        ax2.set_xlabel('Event Frequency')
+        
+        lines_1, labels_1 = ax1.get_legend_handles_labels()
+        lines_2, labels_2 = ax2.get_legend_handles_labels()
+        ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='lower right', bbox_to_anchor=(0.95, 0.05))
+        finalize_and_save(fig, output_dir / 'bottleneck_frequency_vs_duration.png')
 
     if not wait_by_owner.empty:
         top = wait_by_owner.head(10)
         fig, ax = plt.subplots(figsize=(9, 5))
-        ax.barh(top['stage_owner'].astype(str), top['mean_wait_days'], color='#4C72B0')
+        ax.barh([truncate_label(x, 32) for x in top['stage_owner'].astype(str)], top['mean_wait_days'], color='#4C72B0')
         ax.invert_yaxis()
-        ax.set_title('Top Stage Owners by Mean Wait')
-        ax.set_xlabel('Mean Wait (Days)')
+        apply_rtl_text(ax, title='Top Stage Owners by Mean Wait', xlabel='Mean Wait (Days)')
+        annotate_bars(ax, horizontal=True)
         finalize_and_save(fig, output_dir / 'bottleneck_by_stage_owner_top10.png')
 
     if not wait_by_performer.empty:
         top = wait_by_performer.head(10)
         fig, ax = plt.subplots(figsize=(9, 5))
-        ax.barh(top['performer'].astype(str), top['mean_wait_days'], color='#55A868')
+        ax.barh([truncate_label(x, 32) for x in top['performer'].astype(str)], top['mean_wait_days'], color='#55A868')
         ax.invert_yaxis()
-        ax.set_title('Top Performers by Mean Wait')
-        ax.set_xlabel('Mean Wait (Days)')
+        apply_rtl_text(ax, title='Top Performers by Mean Wait', xlabel='Mean Wait (Days)')
+        annotate_bars(ax, horizontal=True)
         finalize_and_save(fig, output_dir / 'bottleneck_by_performer_top10.png')
 
     if not outcome_cycle.empty:
         fig, ax = plt.subplots(figsize=(8, 4.8))
-        ax.bar(outcome_cycle['request_status'].astype(str), outcome_cycle['mean_cycle_time_days'], color='#C44E52')
-        ax.set_title('Cycle Time by Request Outcome/Status')
-        ax.set_ylabel('Mean Cycle Time (Days)')
+        ax.bar([fix_hebrew(x) for x in outcome_cycle['request_status'].astype(str)], outcome_cycle['mean_cycle_time_days'], color='#C44E52')
+        apply_rtl_text(ax, title='Cycle Time by Request Outcome/Status', ylabel='Mean Cycle Time (Days)')
         ax.tick_params(axis='x', rotation=20)
         finalize_and_save(fig, output_dir / 'cycle_time_by_request_status.png')
 
     if not keyword_wait.empty:
         fig, ax = plt.subplots(figsize=(8, 4.8))
         ax.bar(keyword_wait['keyword'], keyword_wait['mean_wait_days'], color='#8172B2')
-        ax.set_title('Mean Wait in Known Bottleneck Keywords')
-        ax.set_ylabel('Mean Wait (Days)')
+        apply_rtl_text(ax, title='Mean Wait in Known Bottleneck Keywords', ylabel='Mean Wait (Days)')
+        annotate_bars(ax, horizontal=False)
         finalize_and_save(fig, output_dir / 'keyword_bottleneck_waits.png')
 
 
@@ -98,7 +121,9 @@ def analyze_bottleneck_segmentation(logfile_path, output_dir):
 
     wait_by_stage = (
         event_wait.groupby('activity', dropna=False)['wait_time_days']
-        .mean().reset_index(name='mean_wait_days')
+        .agg(['mean', 'count'])
+        .reset_index()
+        .rename(columns={'mean': 'mean_wait_days', 'count': 'event_count'})
         .sort_values('mean_wait_days', ascending=False)
     )
     wait_by_stage.to_csv(output_dir / 'bottleneck_by_stage.csv', index=False)
@@ -147,7 +172,7 @@ def analyze_bottleneck_segmentation(logfile_path, output_dir):
     keyword_wait = pd.DataFrame(rows)
     keyword_wait.to_csv(output_dir / 'keyword_bottleneck_analysis.csv', index=False)
 
-    _save_segmentation_plots(wait_by_owner, wait_by_performer, outcome_cycle, keyword_wait.dropna(subset=['mean_wait_days']), output_dir)
+    _save_segmentation_plots(wait_by_stage, wait_by_owner, wait_by_performer, outcome_cycle, keyword_wait.dropna(subset=['mean_wait_days']), output_dir)
     print('Bottleneck segmentation analysis complete.')
 
 

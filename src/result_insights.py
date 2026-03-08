@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 try:
-    from plot_utils import finalize_and_save, set_plot_style
+    from plot_utils import apply_rtl_text, finalize_and_save, set_plot_style, truncate_label
 except ModuleNotFoundError:  # package-import fallback for tests
-    from .plot_utils import finalize_and_save, set_plot_style
+    from .plot_utils import apply_rtl_text, finalize_and_save, set_plot_style, truncate_label
 
 
 def _read_csv_if_exists(path: Path) -> pd.DataFrame:
@@ -39,24 +39,22 @@ def _save_executive_dashboard(summary: dict, output_dir: Path) -> None:
 
     top_b = summary.get('top_bottlenecks', [])[:5]
     if top_b:
-        labels = [x['activity'] for x in top_b]
+        labels = [truncate_label(x['activity'], 26) for x in top_b]
         values = [x['mean_wait_days'] for x in top_b]
         axes[0].barh(labels, values, color='#C44E52')
         axes[0].invert_yaxis()
-        axes[0].set_title('Top Bottlenecks')
-        axes[0].set_xlabel('Mean Wait (Days)')
+        apply_rtl_text(axes[0], title='Top Bottlenecks', xlabel='Mean Wait (Days)')
     else:
         axes[0].text(0.5, 0.5, 'No bottleneck data', ha='center', va='center')
         axes[0].set_axis_off()
 
     priorities = summary.get('priority_recommendations', [])[:5]
     if priorities:
-        labels = [x['activity'] for x in priorities]
+        labels = [truncate_label(x['activity'], 26) for x in priorities]
         values = [x['priority_score'] for x in priorities]
         axes[1].barh(labels, values, color='#4C72B0')
         axes[1].invert_yaxis()
-        axes[1].set_title('Priority Recommendations')
-        axes[1].set_xlabel('Priority Score')
+        apply_rtl_text(axes[1], title='Priority Recommendations', xlabel='Priority Score')
     else:
         axes[1].text(0.5, 0.5, 'No recommendation data', ha='center', va='center')
         axes[1].set_axis_off()

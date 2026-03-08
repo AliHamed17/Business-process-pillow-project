@@ -24,10 +24,10 @@ import numpy as np
 
 try:
     from cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from plot_utils import finalize_and_save, set_plot_style
+    from plot_utils import apply_rtl_text, finalize_and_save, set_plot_style
 except ModuleNotFoundError:
     from .cli_utils import ensure_exists, ensure_output_dir, load_clean_log
-    from .plot_utils import finalize_and_save, set_plot_style
+    from .plot_utils import apply_rtl_text, finalize_and_save, set_plot_style
 
 
 REQUIRED_COLUMNS = ['case_id', 'activity', 'timestamp']
@@ -69,10 +69,13 @@ def analyze_temporal_trends(logfile_path, output_dir):
     # Merge
     monthly_full = monthly_stats.merge(monthly_started, on='month', how='outer').sort_values('month')
     monthly_full.fillna(0, inplace=True)
+    monthly_full['monthly_backlog_delta'] = monthly_full.get('cases_started', 0) - monthly_full['cases_completed']
+    monthly_full['cumulative_backlog'] = monthly_full['monthly_backlog_delta'].cumsum()
 
     set_plot_style()
     _plot_cycle_time_trend(monthly_stats, output_dir)
     _plot_throughput(monthly_full, output_dir)
+    _plot_backlog(monthly_full, output_dir)
     _plot_dotted_chart(df, output_dir)
 
     print("Temporal trend analysis complete.")
@@ -108,9 +111,7 @@ def _plot_cycle_time_trend(monthly_stats, output_dir: Path):
     except Exception:
         pass
 
-    ax.set_title('Monthly Cycle Time Trend')
-    ax.set_xlabel('Month')
-    ax.set_ylabel('Cycle Time (Days)')
+    apply_rtl_text(ax, title='Monthly Cycle Time Trend', xlabel='Month', ylabel='Cycle Time (Days)')
     ax.legend(loc='upper right')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     plt.xticks(rotation=30)
@@ -129,13 +130,28 @@ def _plot_throughput(monthly_full, output_dir: Path):
     ax.bar(monthly_full['month'] + pd.Timedelta(days=width / 2),
            monthly_full['cases_completed'], width=width,
            label='Cases Completed', color='#4C72B0', alpha=0.75)
-    ax.set_title('Monthly Process Throughput')
-    ax.set_xlabel('Month')
-    ax.set_ylabel('Number of Cases')
+    ax2 = ax.twinx()
+    ax2.plot(monthly_full['month'], monthly_full['cumulative_backlog'], color='#C44E52', marker='o', linewidth=2, label='Cumulative Backlog')
+    apply_rtl_text(ax, title='Monthly Process Throughput', xlabel='Month', ylabel='Number of Cases')
+    ax2.set_ylabel('Cumulative Backlog')
     ax.legend()
+    ax2.legend(loc='upper left')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     plt.xticks(rotation=30)
     finalize_and_save(fig, output_dir / 'monthly_throughput.png')
+
+
+def _plot_backlog(monthly_full, output_dir: Path):
+    if monthly_full.empty:
+        return
+    fig, ax = plt.subplots(figsize=(11, 5))
+    colors = np.where(monthly_full['monthly_backlog_delta'] >= 0, '#DD8452', '#55A868')
+    ax.bar(monthly_full['month'], monthly_full['monthly_backlog_delta'], color=colors, alpha=0.8)
+    ax.axhline(0, color='black', linewidth=1)
+    apply_rtl_text(ax, title='Monthly Backlog Delta', xlabel='Month', ylabel='Started minus Completed Cases')
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    plt.xticks(rotation=30)
+    finalize_and_save(fig, output_dir / 'monthly_backlog_trend.png')
 
 
 def _plot_dotted_chart(df, output_dir: Path):
@@ -157,9 +173,7 @@ def _plot_dotted_chart(df, output_dir: Path):
 
     fig, ax = plt.subplots(figsize=(12, max(6, len(case_order) * 0.03)))
     ax.scatter(sub['timestamp'], sub['case_y'], s=1.5, alpha=0.5, color='#4C72B0')
-    ax.set_title(f'Dotted Chart ({len(case_order)} cases)')
-    ax.set_xlabel('Time')
-    ax.set_ylabel('Case Index')
+    apply_rtl_text(ax, title=f'Dotted Chart ({len(case_order)} cases)', xlabel='Time', ylabel='Case Index')
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     plt.xticks(rotation=30)
     finalize_and_save(fig, output_dir / 'dotted_chart.png')
